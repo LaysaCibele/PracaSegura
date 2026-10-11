@@ -1,0 +1,138 @@
+.occurrence-section {
+    padding: 80px 8%;
+    background: #f4f1e9;
+    color: #253b30;
+}
+
+.occurrence-heading {
+    max-width: 650px;
+    margin-bottom: 36px;
+}
+
+.occurrence-heading .section-label {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+.occurrence-heading h2 {
+    margin: 0 0 14px;
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.1;
+}
+
+.occurrence-heading p {
+    max-width: 560px;
+    color: #647067;
+    line-height: 1.7;
+}
+
+.occurrence-form {
+    max-width: 680px;
+    padding: 32px;
+    background: #fff;
+    border: 1px solid #e4e0d7;
+    border-radius: 8px;
+}
+
+.occurrence-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.occurrence-field label {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.occurrence-field select,
+.occurrence-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    border: 1px solid #d6d8d1;
+    border-radius: 5px;
+    background: #fff;
+    color: #253b30;
+    font: inherit;
+}
+
+.occurrence-field select:focus,
+.occurrence-field textarea:focus {
+    outline: 2px solid #66836e;
+    outline-offset: 2px;
+}
+
+.occurrence-field textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.occurrence-field small {
+    color: #747b73;
+    text-align: right;
+    font-size: 12px;
+}
+
+.occurrence-submit {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #294b38;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.occurrence-submit:hover:not(:disabled) {
+    background: #1d3829;
+}
+
+.occurrence-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.occurrence-feedback {
+    padding: 12px 14px;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.occurrence-error {
+    background: #f9e8e5;
+    color: #8a2f25;
+}
+
+.occurrence-success {
+    background: #e7f2e8;
+    color: #245b35;
+}
+
+.occurrence-note {
+    margin-top: 18px;
+    color: #747b73;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .occurrence-section {
+        padding: 56px 6%;
+    }
+
+    .occurrence-form {
+        padding: 22px 18px;
+    }
+
+    .occurrence-submit {
+        width: 100%;
+    }
+}
