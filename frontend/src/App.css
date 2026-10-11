@@ -1,0 +1,31 @@
+.app {
+  min-height: 100vh;
+}
+
+.app main {
+  width: min(1120px, 88%);
+  margin: 0 auto;
+  padding: 80px 0;
+}
+
+.app main h1 {
+  max-width: 760px;
+  margin: 0 0 24px;
+  color: var(--color-forest);
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.app main p {
+  max-width: 560px;
+  color: var(--color-muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.content-container {
+  width: min(1120px, 88%);
+  margin: 0 auto;
+}
