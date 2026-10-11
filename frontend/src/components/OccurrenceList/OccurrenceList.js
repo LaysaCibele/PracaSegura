@@ -1,8 +1,12 @@
+
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import {
   getOccurrences,
   updateOccurrenceStatus,
 } from '../../services/occurrenceService';
+
 import './OccurrenceList.css';
 
 const statusOptions = [
@@ -35,13 +39,15 @@ function getStatusLabel(status) {
   );
 }
 
-function OccurrenceList({ refreshKey }) {
+function OccurrenceList({ user, refreshKey }) {
   const [occurrences, setOccurrences] = useState([]);
   const [statusDrafts, setStatusDrafts] = useState({});
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [error, setError] = useState('');
   const [feedback, setFeedback] = useState('');
+
+  const isManager = user?.role === 'GESTOR';
 
   useEffect(() => {
     let active = true;
@@ -86,6 +92,11 @@ function OccurrenceList({ refreshKey }) {
   }
 
   async function handleUpdateStatus(occurrence) {
+    if (!isManager) {
+      setError('Somente gestores podem atualizar os status.');
+      return;
+    }
+
     const newStatus =
       statusDrafts[occurrence.id] ?? occurrence.status;
 
@@ -107,9 +118,7 @@ function OccurrenceList({ refreshKey }) {
 
       setOccurrences((current) =>
         current.map((item) =>
-          item.id === occurrence.id
-            ? updatedOccurrence
-            : item
+          item.id === occurrence.id ? updatedOccurrence : item
         )
       );
 
@@ -209,47 +218,58 @@ function OccurrenceList({ refreshKey }) {
                   Registrada em {formatDate(occurrence.createdAt)}
                 </time>
 
-                <div className="occurrence-status-editor">
-                  <label htmlFor={`status-${occurrence.id}`}>
-                    Atualizar status
-                  </label>
+                {isManager && (
+                  <div className="occurrence-status-editor">
+                    <label htmlFor={`status-${occurrence.id}`}>
+                      Atualizar status
+                    </label>
 
-                  <select
-                    id={`status-${occurrence.id}`}
-                    value={selectedStatus}
-                    onChange={(event) =>
-                      handleStatusChange(
-                        occurrence.id,
-                        event.target.value
-                      )
-                    }
-                    disabled={isUpdating}
-                  >
-                    {statusOptions.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    <select
+                      id={`status-${occurrence.id}`}
+                      value={selectedStatus}
+                      onChange={(event) =>
+                        handleStatusChange(
+                          occurrence.id,
+                          event.target.value
+                        )
+                      }
+                      disabled={isUpdating}
+                    >
+                      {statusOptions.map((option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
 
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateStatus(occurrence)}
-                    disabled={
-                      isUpdating ||
-                      selectedStatus === occurrence.status
-                    }
-                  >
-                    {isUpdating ? 'Salvando...' : 'Salvar status'}
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateStatus(occurrence)}
+                      disabled={
+                        isUpdating ||
+                        selectedStatus === occurrence.status
+                      }
+                    >
+                      {isUpdating ? 'Salvando...' : 'Salvar status'}
+                    </button>
+                  </div>
+                )}
               </article>
             );
           })}
         </div>
+      )}
+
+      {!user && !loading && (
+        <p>
+          <Link to="/login">
+            Entre na sua conta
+          </Link>
+          {' '}para registrar novas ocorrências.
+        </p>
       )}
 
       <p className="occurrence-list-disclaimer">

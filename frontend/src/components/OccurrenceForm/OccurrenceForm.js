@@ -1,7 +1,10 @@
 
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import { getSquares } from '../../services/squareService';
 import { createOccurrence } from '../../services/occurrenceService';
+
 import './OccurrenceForm.css';
 
 const categories = [
@@ -13,7 +16,7 @@ const categories = [
   'Outro',
 ];
 
-function OccurrenceForm({ onCreated }) {
+function OccurrenceForm({ user, onCreated }) {
   const [squares, setSquares] = useState([]);
   const [squareId, setSquareId] = useState('');
   const [category, setCategory] = useState('');
@@ -43,6 +46,11 @@ function OccurrenceForm({ onCreated }) {
     setError('');
     setSuccess('');
 
+    if (!user) {
+      setError('Entre na sua conta para registrar uma ocorrência.');
+      return;
+    }
+
     if (!squareId || !category || !description.trim()) {
       setError('Preencha todos os campos antes de enviar.');
       return;
@@ -54,21 +62,17 @@ function OccurrenceForm({ onCreated }) {
       await createOccurrence({
         squareId: Number(squareId),
         category,
-          description: description.trim(),
+        description: description.trim(),
       });
 
-    setSuccess('Ocorrência registrada com sucesso!');
-    setSquareId('');
-    setCategory('');
-    setDescription('');
-
-if (onCreated) {
-  onCreated();
-}
-
       setSuccess('Ocorrência registrada com sucesso!');
+      setSquareId('');
       setCategory('');
       setDescription('');
+
+      if (onCreated) {
+        onCreated();
+      }
     } catch (err) {
       setError(
         err.message || 'Não foi possível registrar a ocorrência.'
@@ -89,88 +93,113 @@ if (onCreated) {
         </p>
       </div>
 
-      <form className="occurrence-form" onSubmit={handleSubmit}>
-        <div className="occurrence-field">
-          <label htmlFor="occurrence-square">Praça</label>
-          <select
-            id="occurrence-square"
-            value={squareId}
-            onChange={(event) => setSquareId(event.target.value)}
-            required
-            disabled={loadingSquares || squares.length === 0}
-          >
-            <option value="">
-              {loadingSquares
-                ? 'Carregando praças...'
-                : squares.length === 0
-                  ? 'Nenhuma praça cadastrada'
-                  : 'Selecione uma praça'}
-            </option>
-
-            {squares.map((square) => (
-              <option key={square.id} value={square.id}>
-                {square.name} — {square.neighborhood || 'Bairro não informado'}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="occurrence-field">
-          <label htmlFor="occurrence-category">Categoria</label>
-          <select
-            id="occurrence-category"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            required
-          >
-            <option value="">Selecione uma categoria</option>
-            {categories.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="occurrence-field">
-          <label htmlFor="occurrence-description">Descrição</label>
-          <textarea
-            id="occurrence-description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder="Descreva a situação observada..."
-            maxLength={1000}
-            rows={5}
-            required
-          />
-          <small>{description.length}/1000 caracteres</small>
-        </div>
-
-        {error && (
-          <p className="occurrence-feedback occurrence-error" role="alert">
-            {error}
+      {!user ? (
+        <div className="occurrence-form">
+          <p>
+            Para registrar uma ocorrência, você precisa entrar na sua conta.
           </p>
-        )}
 
-        {success && (
-          <p className="occurrence-feedback occurrence-success" role="status">
-            {success}
+          <Link to="/login" className="occurrence-submit">
+            Entrar ou criar conta ↗
+          </Link>
+
+          <p className="occurrence-note">
+            Registre apenas informações observadas. Este formulário não é
+            um canal de atendimento emergencial.
           </p>
-        )}
+        </div>
+      ) : (
+        <form className="occurrence-form" onSubmit={handleSubmit}>
+          <div className="occurrence-field">
+            <label htmlFor="occurrence-square">Praça</label>
+            <select
+              id="occurrence-square"
+              value={squareId}
+              onChange={(event) => setSquareId(event.target.value)}
+              required
+              disabled={loadingSquares || squares.length === 0}
+            >
+              <option value="">
+                {loadingSquares
+                  ? 'Carregando praças...'
+                  : squares.length === 0
+                    ? 'Nenhuma praça cadastrada'
+                    : 'Selecione uma praça'}
+              </option>
 
-        <button
-          className="occurrence-submit"
-          type="submit"
-          disabled={submitting || loadingSquares || squares.length === 0}
-        >
-          {submitting ? 'Enviando...' : 'Registrar ocorrência ↗'}
-        </button>
+              {squares.map((square) => (
+                <option key={square.id} value={square.id}>
+                  {square.name} — {square.neighborhood || 'Bairro não informado'}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <p className="occurrence-note">
-          Registre apenas informações observadas. Este formulário não é um
-          canal de atendimento emergencial.
-        </p>
-      </form>
+          <div className="occurrence-field">
+            <label htmlFor="occurrence-category">Categoria</label>
+            <select
+              id="occurrence-category"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              required
+            >
+              <option value="">Selecione uma categoria</option>
+
+              {categories.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="occurrence-field">
+            <label htmlFor="occurrence-description">Descrição</label>
+            <textarea
+              id="occurrence-description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Descreva a situação observada..."
+              maxLength={1000}
+              rows={5}
+              required
+            />
+
+            <small>{description.length}/1000 caracteres</small>
+          </div>
+
+          {error && (
+            <p
+              className="occurrence-feedback occurrence-error"
+              role="alert"
+            >
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p
+              className="occurrence-feedback occurrence-success"
+              role="status"
+            >
+              {success}
+            </p>
+          )}
+
+          <button
+            className="occurrence-submit"
+            type="submit"
+            disabled={submitting || loadingSquares || squares.length === 0}
+          >
+            {submitting ? 'Enviando...' : 'Registrar ocorrência ↗'}
+          </button>
+
+          <p className="occurrence-note">
+            Registre apenas informações observadas. Este formulário não é
+            um canal de atendimento emergencial.
+          </p>
+        </form>
+      )}
     </section>
   );
 }
