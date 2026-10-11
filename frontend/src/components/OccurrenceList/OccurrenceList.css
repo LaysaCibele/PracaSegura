@@ -104,3 +104,44 @@
         padding: 56px 6%;
     }
 }
+
+/* Seletor de ocorrências */
+.occurrence-list-section select {
+    width: 100%;
+    max-width: 320px;
+    padding: 12px 42px 12px 14px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #253b30;
+
+    background-color: #faf9f6;
+    border: 1px solid #d8ded7;
+    border-radius: 8px;
+
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.occurrence-list-section select:hover {
+    border-color: #78917e;
+}
+
+.occurrence-list-section select:focus-visible {
+    border-color: #294b38;
+    box-shadow: 0 0 0 3px rgba(41, 75, 56, 0.15);
+}
+
+.occurrence-list-section select option {
+    padding: 10px;
+    color: #253b30;
+    background-color: #fff;
+}
+
+@media (max-width: 600px) {
+    .occurrence-list-section select {
+        max-width: 100%;
+    }
+}
