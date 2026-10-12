@@ -1,0 +1,175 @@
+.square-management {
+    margin: 48px 0;
+    padding: 32px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+    color: #17211d;
+}
+
+.square-management h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.04em;
+}
+
+.square-management>p {
+    margin: 0 0 24px;
+    color: #647067;
+    line-height: 1.6;
+}
+
+.square-management form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    padding: 24px;
+    background: #f7f9f7;
+    border: 1px solid #e5eae6;
+    border-radius: 14px;
+}
+
+.square-management form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #35443a;
+}
+
+.square-management input,
+.square-management textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #d5ddd7;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #17211d;
+    font: inherit;
+    font-weight: 400;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.square-management textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.square-management input:focus,
+.square-management textarea:focus {
+    outline: none;
+    border-color: #24784e;
+    box-shadow: 0 0 0 3px rgba(36, 120, 78, 0.12);
+}
+
+.square-management form button,
+.square-management li button {
+    padding: 11px 16px;
+    border: 1px solid #24784e;
+    border-radius: 9px;
+    background: #24784e;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.square-management form button {
+    align-self: end;
+}
+
+.square-management form button:hover,
+.square-management li button:hover {
+    background: #195c3a;
+}
+
+.square-management button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.square-management form button[type="button"] {
+    border-color: #cbd5ce;
+    background: #ffffff;
+    color: #35443a;
+}
+
+.square-management h3 {
+    margin: 32px 0 16px;
+    font-size: 1.15rem;
+}
+
+.square-management ul {
+    display: grid;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.square-management li {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #e5eae6;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.square-management li strong {
+    margin-right: 4px;
+}
+
+.square-management li button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+.square-management li button:last-child {
+    border-color: #e6caca;
+    background: #fff5f5;
+    color: #a12d2d;
+}
+
+.square-management li button:last-child:hover {
+    background: #ffe5e5;
+}
+
+.square-management [role="alert"] {
+    padding: 12px 14px;
+    border: 1px solid #efcaca;
+    border-radius: 9px;
+    background: #fff4f4;
+    color: #a12d2d;
+}
+
+.square-management [role="status"] {
+    padding: 12px 14px;
+    border: 1px solid #b9dfc8;
+    border-radius: 9px;
+    background: #f0faf3;
+    color: #206b40;
+}
+
+@media (max-width: 640px) {
+    .square-management {
+        padding: 18px;
+        margin: 28px 0;
+    }
+
+    .square-management form {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 16px;
+    }
+
+    .square-management li {
+        align-items: flex-start;
+    }
+}

@@ -11,6 +11,7 @@ import Login from './pages/Login/Login';
 import OccurrenceForm from './components/OccurrenceForm/OccurrenceForm';
 import OccurrenceList from './components/OccurrenceList/OccurrenceList';
 import { getCurrentUser, logout } from './services/authService';
+import SquareManagement from "./components/SquareManagement/SquareManagement";
 
 import './App.css';
 
@@ -19,6 +20,8 @@ function Home() {
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
+
+  
   useEffect(() => {
     getCurrentUser()
       .then(setUser)
@@ -71,6 +74,10 @@ function Home() {
 
           <SectionIntro />
           <SquaresSection />
+
+          {user?.role === "GESTOR" && (
+        <SquareManagement />
+        )}
 
           <OccurrenceForm
             user={user}

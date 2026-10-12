@@ -1,32 +1,65 @@
 
 const API_URL = "/api/squares";
 
-export async function getSquares() {
-  const response = await fetch(API_URL);
-
-  if (!response.ok) {
-    throw new Error("Não foi possível carregar as praças.");
-  }
-
-  return response.json();
-}
-
-export async function createSquare(square) {
-  const response = await fetch(API_URL, {
-    method: "POST",
+async function request(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(options.headers || {}),
+      ...(options.body
+        ? { "Content-Type": "application/json" }
+        : {}),
     },
-    body: JSON.stringify(square),
   });
 
   if (!response.ok) {
-    throw new Error("Não foi possível cadastrar a praça.");
-  }
+  const message = await response.text();
+
+  console.error("Erro na API de praças:", {
+    url,
+    status: response.status,
+    message,
+  });
+
+  throw new Error(
+    `Erro ${response.status}: ${
+      message || "Não foi possível concluir a operação."
+    }`
+  );
+}
 
   if (response.status === 204) {
     return null;
   }
 
   return response.json();
+}
+
+export async function getSquares() {
+  return request(API_URL);
+}
+
+export async function getSquareById(id) {
+  return request(`${API_URL}/${id}`);
+}
+
+export async function createSquare(square) {
+  return request(API_URL, {
+    method: "POST",
+    body: JSON.stringify(square),
+  });
+}
+
+export async function updateSquare(id, square) {
+  return request(`${API_URL}/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(square),
+  });
+}
+
+export async function deleteSquare(id) {
+  return request(`${API_URL}/${id}`, {
+    method: "DELETE",
+  });
 }
