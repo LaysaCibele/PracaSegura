@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pracasegura.dto.OccurrenceResponse;
+import com.pracasegura.dto.OccurrenceStatsResponse;
 import com.pracasegura.dto.OccurrenceStatusRequest;
 import com.pracasegura.model.AppUser;
 import com.pracasegura.model.Occurrence;
@@ -68,15 +70,45 @@ class OccurrenceControllerTest {
     }
 
     @Test
-    void citizenCanQueryAllOccurrencesOrFilterBySquare() {
+    void citizenOnlyReceivesOwnOccurrencesAndCanFilterThemBySquare() {
         when(userRepository.findByEmail(citizen.getEmail())).thenReturn(Optional.of(citizen));
-        when(occurrenceService.findAll()).thenReturn(List.of(occurrence));
-        when(occurrenceService.findBySquareId(7L)).thenReturn(List.of(occurrence));
+        Occurrence ownOccurrence = new Occurrence();
+        ownOccurrence.setCategory("Limpeza");
+        ownOccurrence.setDescription("Registro próprio");
+        ownOccurrence.setSquare(occurrence.getSquare());
+        ownOccurrence.setReporter(citizen);
+        ReflectionTestUtils.setField(ownOccurrence, "id", 12L);
+        when(occurrenceService.findByReporterId(3L)).thenReturn(List.of(ownOccurrence));
+        when(occurrenceService.findByReporterIdAndSquareId(3L, 7L)).thenReturn(List.of(ownOccurrence));
 
         assertEquals(1, controller.findAll(null, authentication(citizen)).size());
         assertEquals(1, controller.findAll(7L, authentication(citizen)).size());
+        verify(occurrenceService).findByReporterId(3L);
+        verify(occurrenceService).findByReporterIdAndSquareId(3L, 7L);
+        verify(occurrenceService, never()).findAll();
+        verify(occurrenceService, never()).findBySquareId(7L);
+    }
+
+    @Test
+    void managerCanQueryAllOccurrencesOrFilterBySquare() {
+        when(userRepository.findByEmail(manager.getEmail())).thenReturn(Optional.of(manager));
+        when(occurrenceService.findAll()).thenReturn(List.of(occurrence));
+        when(occurrenceService.findBySquareId(7L)).thenReturn(List.of(occurrence));
+
+        assertEquals(1, controller.findAll(null, authentication(manager)).size());
+        assertEquals(1, controller.findAll(7L, authentication(manager)).size());
         verify(occurrenceService).findAll();
         verify(occurrenceService).findBySquareId(7L);
+    }
+
+    @Test
+    void citizenDashboardKeepsAggregatedStatsForSelectedSquare() {
+        when(userRepository.findByEmail(citizen.getEmail())).thenReturn(Optional.of(citizen));
+        OccurrenceStatsResponse stats = new OccurrenceStatsResponse(5L, List.of(), List.of());
+        when(occurrenceService.getStats(null, 7L)).thenReturn(stats);
+
+        assertEquals(stats, controller.getStats(7L, authentication(citizen)));
+        verify(occurrenceService).getStats(null, 7L);
     }
 
     @Test
@@ -120,6 +152,6 @@ class OccurrenceControllerTest {
     }
 
     private TestingAuthenticationToken authentication(AppUser user) {
-        return new TestingAuthenticationToken(user.getEmail(), "unused");
+        return new TestingAuthenticationToken(user.getEmail(), "unused", List.of());
     }
 }

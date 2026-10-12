@@ -41,8 +41,12 @@ function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, 
     <div className="page-content">
       <header className="page-heading">
         <span className="section-label">ACOMPANHAMENTO</span>
-        <h1>Ocorrências</h1>
-        <p>Consulte registros de todas as praças ou filtre por um espaço específico.</p>
+        <h1>{user?.role === 'GESTOR' || !user ? 'Ocorrências' : 'Acompanhe seus registros'}</h1>
+        <p>{user?.role === 'GESTOR'
+          ? 'Consulte registros de todas as praças ou filtre por um espaço específico.'
+          : user
+            ? 'Acompanhe suas ocorrências e consulte o resumo agregado por praça.'
+            : 'Entre na sua conta para consultar o dashboard e acompanhar suas próprias ocorrências.'}</p>
       </header>
 
       <SquareSelector

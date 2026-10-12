@@ -153,11 +153,14 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
           04 — ACOMPANHAMENTO
         </span>
 
-        <h2>Registros recentes.</h2>
+        <h2>{isManager ? 'Registros recentes.' : user ? 'Minhas ocorrências.' : 'Acompanhamento.'}</h2>
 
         <p>
-          Consulte as ocorrências registradas para os espaços públicos
-          cadastrados no PraçaSegura.
+          {isManager
+            ? 'Consulte as ocorrências registradas para os espaços públicos cadastrados no PraçaSegura.'
+            : user
+              ? 'Acompanhe o status das ocorrências que você registrou.'
+              : 'Entre na sua conta para ver seu dashboard e acompanhar seus registros.'}
         </p>
 
       </div>
@@ -170,8 +173,8 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
         <p role="alert">{error}</p>
       )}
 
-      {!loading && !error && occurrences.length === 0 && (
-        <p>Nenhuma ocorrência registrada até o momento.</p>
+      {!loading && !error && user && occurrences.length === 0 && (
+        <p>{isManager ? 'Nenhuma ocorrência registrada até o momento.' : 'Você ainda não registrou ocorrências.'}</p>
       )}
 
       {feedback && (
@@ -275,7 +278,7 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
           <Link to="/login">
             Entre na sua conta
           </Link>
-          {' '}para registrar novas ocorrências.
+          {' '}para acessar o dashboard e acompanhar suas próprias ocorrências.
         </p>
       )}
 

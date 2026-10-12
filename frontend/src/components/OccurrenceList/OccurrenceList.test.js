@@ -26,7 +26,9 @@ beforeEach(() => {
   updateOccurrenceStatus.mockReset();
 });
 
-test('citizen sees records from different plazas without edit controls', async () => {
+test('citizen sees only their own records without edit controls', async () => {
+  getOccurrences.mockResolvedValue([records[0]]);
+
   render(
     <OccurrenceList
       user={{ id: 3, role: 'CIDADAO' }}
@@ -35,9 +37,10 @@ test('citizen sees records from different plazas without edit controls', async (
     />
   );
 
+  expect(await screen.findByRole('heading', { name: 'Minhas ocorrências.' })).toBeInTheDocument();
   expect(await screen.findByText('Registro A')).toBeInTheDocument();
-  expect(screen.getByText('Registro B')).toBeInTheDocument();
-  expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(2);
+  expect(screen.queryByText('Registro B')).not.toBeInTheDocument();
+  expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
   expect(screen.queryByText('Atualizar status')).not.toBeInTheDocument();
 });
 

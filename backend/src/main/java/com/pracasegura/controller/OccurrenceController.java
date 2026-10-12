@@ -64,11 +64,18 @@ public List<OccurrenceResponse> findAll(
         @RequestParam(required = false) Long squareId,
         Authentication authentication) {
 
-    getAuthenticatedUser(authentication);
+    AppUser user = getAuthenticatedUser(authentication);
 
-    List<Occurrence> occurrences = squareId == null
-            ? occurrenceService.findAll()
-            : occurrenceService.findBySquareId(squareId);
+    List<Occurrence> occurrences;
+    if (isManager(user)) {
+        occurrences = squareId == null
+                ? occurrenceService.findAll()
+                : occurrenceService.findBySquareId(squareId);
+    } else {
+        occurrences = squareId == null
+                ? occurrenceService.findByReporterId(user.getId())
+                : occurrenceService.findByReporterIdAndSquareId(user.getId(), squareId);
+    }
     return occurrences.stream().map(OccurrenceResponse::from).toList();
 }
 

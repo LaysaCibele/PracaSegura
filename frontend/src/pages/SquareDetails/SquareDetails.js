@@ -64,8 +64,10 @@ function SquareDetails({ user, refreshKey, onRefresh }) {
       <section className="square-detail-records" aria-labelledby="square-occurrences-title">
         <div className="square-detail-section-heading">
           <span className="section-label">ACOMPANHAMENTO</span>
-          <h2 id="square-occurrences-title">Ocorrências desta praça</h2>
-          <p>Os indicadores e registros abaixo são filtrados para {square.name}.</p>
+          <h2 id="square-occurrences-title">Resumo da praça</h2>
+          <p>{user?.role === 'GESTOR'
+            ? `Indicadores agregados e ocorrências registradas em ${square.name}.`
+            : `Veja o resumo agregado de ${square.name} e acompanhe apenas as ocorrências que você registrou neste local.`}</p>
         </div>
 
         {user ? (

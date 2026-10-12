@@ -26,7 +26,8 @@ O desafio relaciona-se aos **ODS 3 — Saúde e bem-estar**, **ODS 11 — Cidade
 
 - Criar conta, entrar e sair da aplicação.
 - Consultar as praças cadastradas e seus detalhes.
-- Ver ocorrências de todas as praças ou filtrar por uma praça específica. A consulta exige autenticação.
+- Consultar o dashboard agregado por praça e filtrar por um local.
+- Ver somente as próprias ocorrências e acompanhar seu status; a lista pode ser filtrada por praça.
 - Registrar uma ocorrência associada à praça selecionada.
 - Acompanhar o status das ocorrências.
 - Consultar os detalhes individuais apenas das próprias ocorrências.
@@ -93,7 +94,7 @@ Python (data-science) ── Portal de Dados Abertos do Recife
        └── gera o relatório agregado consumido pelo frontend
 ```
 
-O frontend utiliza o proxy de desenvolvimento para encaminhar `/api` a `http://localhost:8080`. O inventário de iluminação é servido como arquivo estático do frontend; os dados brutos não são persistidos pelo pipeline.
+O frontend utiliza o proxy de desenvolvimento para encaminhar `/api` a `http://localhost:8080`. O inventário de iluminação é servido como arquivo estático do frontend; os dados brutos não são persistidos pelo pipeline. A listagem da API retorna somente ocorrências do cidadão autenticado e mantém a consulta geral para gestores; o endpoint de estatísticas continua agregado por praça para os perfis autenticados.
 
 ## API principal
 
@@ -106,8 +107,8 @@ O frontend utiliza o proxy de desenvolvimento para encaminhar `/api` a `http://l
 | `GET /api/health` | Público | Verificar disponibilidade |
 | `GET /api/squares` e `GET /api/squares/{id}` | Público | Consultar praças |
 | `POST`, `PUT`, `DELETE /api/squares...` | Gestor | Administrar praças |
-| `GET /api/occurrences` | Autenticado | Consultar ocorrências de todas as praças |
-| `GET /api/occurrences?squareId={id}` | Autenticado | Filtrar ocorrências por praça |
+| `GET /api/occurrences` | Cidadão: próprias; gestor: todas | Consultar ocorrências |
+| `GET /api/occurrences?squareId={id}` | Cidadão: próprias; gestor: todas | Filtrar ocorrências por praça |
 | `GET /api/occurrences/stats[?squareId={id}]` | Autenticado | Consultar indicadores de ocorrências |
 | `GET /api/occurrences/{id}` | Autor ou gestor | Consultar uma ocorrência |
 | `POST /api/occurrences?squareId={id}` | Cidadão autenticado | Registrar ocorrência |
