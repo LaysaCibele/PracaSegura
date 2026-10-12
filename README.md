@@ -1,118 +1,127 @@
 # PraçaSegura
 
-Plataforma web para apoiar o monitoramento e a análise da segurança em praças públicas do Recife por meio de dados, visualizações e um modelo de estimativa de risco.
+Plataforma web para consulta de informações sobre praças públicas do Recife, visualização de ocorrências, acompanhamento das condições de infraestrutura e análise de fatores relacionados à segurança desses espaços.
 
-> **MVP desenvolvido a partir do desafio "Ampliação da segurança em praças públicas via tecnologia", da Prefeitura do Recife.**
+> **MVP desenvolvido a partir do desafio "Ampliação da segurança em praças públicas via tecnologia", da Prefeitura do Recife — CORETO.**
 
 ## Sobre o projeto
 
-O PraçaSegura busca centralizar informações sobre praças públicas, ocorrências e condições de infraestrutura em uma única plataforma.
+O PraçaSegura tem como objetivo ampliar o acesso da população a informações sobre praças públicas, contribuindo para uma melhor compreensão das condições de segurança e infraestrutura desses espaços.
 
-A proposta utiliza **Ciência de Dados e Machine Learning** para transformar dados públicos e dados sintéticos em indicadores capazes de auxiliar na identificação de padrões e apoiar a tomada de decisão.
+A proposta combina desenvolvimento web, Ciência de Dados e Machine Learning para organizar informações sobre praças, ocorrências e iluminação pública, permitindo identificar padrões e apoiar a tomada de decisão.
 
-O sistema possui duas perspectivas principais:
+O projeto possui duas perspectivas complementares:
 
-* **Gestor público:** visualização de indicadores, mapa das praças, ocorrências e estimativa de risco.
-* **Cidadão:** consulta de informações sobre uma praça e registro de ocorrências ou problemas identificados no local.
+* **Cidadão:** consulta informações sobre as praças, acompanha ocorrências registradas, consulta condições de infraestrutura e registra problemas identificados nos locais.
+* **Gestor público:** administra as informações das praças, acompanha ocorrências e utiliza indicadores para apoiar o planejamento de ações públicas.
 
-Os índices apresentados são estimativas analíticas para apoio à decisão e não representam uma classificação definitiva de periculosidade.
+A proposta inclui a construção de um índice de segurança estimado para cada praça, considerando fatores como ocorrências registradas, iluminação e infraestrutura. Esse indicador deverá apresentar suas fontes, critérios e limitações, sem ser tratado como uma medida definitiva de criminalidade ou garantia de segurança.
 
-## MVP
+## Funcionalidades
 
-A primeira versão do PraçaSegura possui escopo reduzido, priorizando as funcionalidades essenciais para validar a proposta:
+### Implementadas no MVP
 
-* Listagem e visualização geográfica das praças.
-* Dashboard com indicadores.
-* Página de detalhes de uma praça.
-* Visualização e registro de ocorrências.
-* Geração de protocolo para ocorrências registradas.
-* Cálculo de índice de risco.
-* Análise exploratória dos dados.
-* Modelo de Machine Learning para estimativa de risco.
+* Cadastro e autenticação de usuários.
+* Perfis de cidadão e gestor.
+* Listagem e consulta de praças.
+* Cadastro e edição de informações das praças pelo gestor.
+* Registro de ocorrências associado a uma praça.
+* Geração e acompanhamento de registros de ocorrências.
+* Consulta de ocorrências com controle de acesso.
+* Atualização do status das ocorrências pelo gestor.
+* Dashboard com total de ocorrências e distribuição por status e categoria.
+* Persistência de dados em PostgreSQL.
 
-Funcionalidades como alertas automáticos, autenticação completa, integração com sensores e utilização de dados operacionais em tempo real permanecem como possibilidades para versões futuras.
+### Em desenvolvimento e previstas
+
+* Consulta pública das ocorrências de todas as praças por cidadãos autenticados.
+* Página de detalhes de cada praça com informações consolidadas.
+* Visualização geográfica das praças em um mapa.
+* Integração de dados públicos de iluminação e infraestrutura.
+* Construção e validação de um índice de segurança estimado.
+* Análises exploratórias para identificar padrões nas ocorrências.
+* Desenvolvimento e avaliação de modelos de Machine Learning.
+* Dashboard com indicadores de segurança e infraestrutura por praça.
+* Integração de um serviço Python para disponibilizar análises e estimativas, caso necessário.
+
+O escopo poderá evoluir conforme a disponibilidade dos dados e os resultados das etapas de desenvolvimento e validação.
 
 ## Dados
 
-O projeto utiliza prioritariamente dados públicos do Recife, complementados por dados sintéticos quando necessário.
+O projeto pretende utilizar dados públicos do Recife, complementados por dados sintéticos quando necessário para desenvolver e testar o MVP.
 
-### Dados reais
+### Dados públicos
 
-**Parques e Praças — Prefeitura do Recife**
+**Praças e parques — Prefeitura do Recife**
 
-Fonte utilizada para obter informações como:
+Os conjuntos de dados disponíveis poderão fornecer informações como:
 
-* Nome da praça.
+* Nome e identificação da praça.
 * Endereço e bairro.
-* Latitude e longitude.
-* Área e localização geográfica.
+* Coordenadas geográficas.
+* Características e informações de infraestrutura, conforme os campos publicados.
 
-Os dados podem ser consultados no Portal de Dados Abertos da Prefeitura do Recife, conforme a disponibilidade dos conjuntos publicados.
+**Iluminação pública — Prefeitura do Recife / EMLURB**
 
-**Iluminação Pública — Prefeitura do Recife / EMLURB**
+Os dados de iluminação poderão contribuir para a análise das condições de infraestrutura das praças, conforme a disponibilidade de informações sobre postes, luminárias e localização.
 
-Fonte complementar para informações relacionadas à infraestrutura de iluminação pública, incluindo localização dos postes e características das luminárias, conforme os campos disponíveis na base.
+A utilização de cada fonte dependerá da verificação dos dados, da cobertura geográfica, da atualização e das condições de uso.
 
-### Dados sintéticos
+### Dados de ocorrências
 
-Como a base pública de ocorrências da Guarda Municipal não apresenta registros acessíveis para utilização no MVP, as ocorrências serão inicialmente **simuladas**.
+Quando não houver uma base pública adequada e acessível, dados sintéticos poderão ser utilizados para testar o banco de dados, a API, as visualizações e os fluxos da aplicação.
 
-Os dados sintéticos permitirão:
-
-* Desenvolver e testar o banco de dados.
-* Construir dashboards e visualizações.
-* Testar os endpoints da API.
-* Realizar análises exploratórias.
-* Treinar e avaliar inicialmente o modelo de Machine Learning.
-
-Os dados simulados serão identificados e documentados para evitar que sejam confundidos com ocorrências reais.
+Esses registros deverão ser identificados como simulados, separados dos dados reais e excluídos de conclusões que pretendam descrever a segurança real das praças.
 
 ## Ciência de Dados e Machine Learning
 
-O componente de Ciência de Dados busca identificar padrões associados às ocorrências e estimar um índice de risco para cada praça.
+A frente de Ciência de Dados busca investigar fatores associados às condições de segurança dos espaços públicos e desenvolver indicadores que auxiliem a compreensão dos dados disponíveis.
 
-Entre as variáveis consideradas estão:
+Entre os fatores que poderão ser analisados estão:
 
-* Horário e dia da semana.
-* Quantidade e gravidade das ocorrências.
-* Condições de iluminação.
-* Fluxo estimado de pessoas.
-* Disponibilidade de equipamentos e infraestrutura.
+* Quantidade, categoria, gravidade e distribuição temporal das ocorrências.
+* Condições de iluminação pública.
+* Características de infraestrutura e conservação.
+* Distribuição geográfica dos registros.
+* Disponibilidade, qualidade e cobertura dos dados.
 
-O índice de risco varia de **0 a 100** e funciona como indicador analítico de apoio à decisão.
+### Índice de segurança estimado
 
-No MVP, a abordagem prioriza modelos simples e interpretáveis, permitindo avaliar os resultados e as limitações antes de evoluir para soluções mais complexas.
+O PraçaSegura prevê um indicador de 0 a 100 para sintetizar fatores relacionados à segurança de cada praça.
 
-Como parte dos dados é sintética, os resultados iniciais não devem ser interpretados como evidência de risco real. A validação operacional dependerá da disponibilidade de dados reais e representativos.
+A metodologia de cálculo ainda deverá ser definida e validada. O indicador poderá começar com uma abordagem baseada em critérios interpretáveis e evoluir para modelos estatísticos ou de Machine Learning, caso os dados disponíveis permitam.
+
+O resultado deverá ser apresentado com contexto, período de referência e limitações. Um índice não representa uma garantia de segurança, e a ausência de registros não significa necessariamente ausência de problemas.
+
+Modelos treinados com dados sintéticos serão utilizados apenas para desenvolvimento e experimentação. Sua aplicação a situações reais dependerá de dados representativos e de validação adequada.
 
 ## Arquitetura
 
-A aplicação será organizada em três componentes principais:
+A aplicação utiliza uma arquitetura cliente-servidor.
 
 ```text
-                ┌──────────────────────┐
-                │       React          │
-                │     JavaScript       │
-                └──────────┬───────────┘
-                           │
-                       REST / HTTP
-                           │
-                ┌──────────▼───────────┐
-                │     Spring Boot      │
-                │        API           │
-                └──────┬────────┬──────┘
-                       │        │
-              ┌────────▼───┐    │
-              │ PostgreSQL │    │
-              └────────────┘    │
-                                │
-                       ┌────────▼────────┐
-                       │   FastAPI       │
-                       │   Python / ML   │
-                       └─────────────────┘
+┌────────────────────────────┐
+│          React             │
+│      JavaScript / CSS      │
+└──────────────┬─────────────┘
+               │
+          REST / HTTP
+               │
+┌──────────────▼─────────────┐
+│        Spring Boot         │
+│     API e regras de        │
+│         negócio            │
+└──────────────┬─────────────┘
+               │
+┌──────────────▼─────────────┐
+│        PostgreSQL          │
+│      Persistência          │
+└────────────────────────────┘
 ```
 
-O React será responsável pela interface e interação com o usuário. O Spring Boot concentrará as regras de negócio e o acesso ao banco de dados. O serviço FastAPI disponibilizará as funcionalidades de análise e predição desenvolvidas em Python.
+O front-end é responsável pela interface e pela interação com o usuário. O back-end concentra as regras de negócio, a autenticação, as permissões e o acesso aos dados. O PostgreSQL armazena as informações da aplicação.
+
+Um serviço independente de Ciência de Dados em Python poderá ser integrado futuramente para disponibilizar análises e predições.
 
 ## Tecnologias
 
@@ -122,8 +131,6 @@ O React será responsável pela interface e interação com o usuário. O Spring
 * JavaScript
 * React Router
 * CSS
-* Biblioteca de mapas
-* Biblioteca de gráficos
 
 ### Back-end
 
@@ -131,68 +138,61 @@ O React será responsável pela interface e interação com o usuário. O Spring
 * Spring Boot
 * Spring Web
 * Spring Data JPA
+* Spring Security
+
+### Banco de dados
+
 * PostgreSQL
+* Docker
 
 ### Ciência de Dados e Machine Learning
+
+Tecnologias previstas para as etapas analíticas:
 
 * Python
 * Pandas
 * NumPy
 * Scikit-learn
-* FastAPI
+* FastAPI, caso seja adotado um serviço independente de predição.
 
-### Desenvolvimento e infraestrutura
+### Desenvolvimento
 
 * Git
 * GitHub
-* Docker
+* Maven
+* npm
 
 ## Estrutura do projeto
 
 ```text
 praca-segura/
-│
 ├── frontend/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
-│   │   ├── hooks/
-│   │   ├── styles/
 │   │   ├── App.js
 │   │   └── index.js
 │   └── package.json
-│
 ├── backend/
-│   └── ...
-│
-├── ml-service/
-│   └── ...
-│
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── README.md
-│
-├── docs/
-│   └── ...
-│
+│   ├── src/
+│   └── pom.xml
 ├── docker-compose.yml
 └── README.md
 ```
 
-A estrutura do front-end utiliza arquivos JavaScript (`.js`) e CSS, sem TypeScript. A organização definitiva dos diretórios poderá ser ajustada conforme a implementação.
+A estrutura apresentada representa a organização principal da aplicação. Diretórios adicionais poderão ser incluídos conforme o desenvolvimento das etapas de Ciência de Dados e Machine Learning.
 
-## Privacidade
+## Privacidade e responsabilidade
 
-O projeto não utiliza reconhecimento facial, identificação individual ou rastreamento de pessoas.
+O PraçaSegura busca trabalhar com informações relacionadas aos espaços públicos, sem recorrer a reconhecimento facial ou rastreamento individual de pessoas.
 
-A análise prioriza informações agregadas relacionadas ao espaço público.
+Os registros de ocorrências deverão ser tratados com cuidado para evitar a exposição indevida de dados pessoais. A consulta e a administração das informações devem respeitar as permissões de cada perfil.
 
-Imagens eventualmente anexadas aos registros de ocorrências deverão ser tratadas de acordo com as regras de privacidade aplicáveis, com atenção à exposição de dados pessoais.
+Os indicadores de segurança serão apresentados como estimativas analíticas, com transparência sobre as fontes utilizadas e as limitações dos dados. O sistema não substitui estatísticas oficiais, avaliações das autoridades competentes ou medidas de segurança pública.
 
-## Fonte do desafio
+## Origem do projeto
 
 Projeto desenvolvido a partir do desafio público **"Ampliação da segurança em praças públicas via tecnologia"**, da Prefeitura do Recife — CORETO.
 
@@ -200,10 +200,10 @@ Projeto desenvolvido a partir do desafio público **"Ampliação da segurança e
 
 **Em desenvolvimento — MVP**
 
-O objetivo desta primeira versão é validar a proposta com um produto funcional, utilizando dados públicos e sintéticos antes de uma eventual integração com dados operacionais reais.
+O projeto está na etapa de construção da aplicação web, com autenticação, gerenciamento de praças, registro de ocorrências e indicadores básicos. As próximas etapas priorizam ampliar a consulta de informações pelo cidadão, integrar dados de infraestrutura e desenvolver uma metodologia validada para estimar fatores relacionados à segurança das praças.
 
 ## Licença
 
-O código-fonte do projeto está disponível sob a licença **MIT**.
+O código-fonte do projeto está disponibilizado sob a licença MIT.
 
-Os conjuntos de dados públicos utilizados permanecem sujeitos às respectivas licenças e condições de uso das fontes originais.
+Os conjuntos de dados utilizados permanecem sujeitos às respectivas licenças e condições de uso das fontes originais.
