@@ -103,10 +103,9 @@ O cadastro público não permite escolher o perfil de gestor. Os dados pessoais 
 
 ### 6.1. Clonar o repositório
 
-Substitua o endereço pelo URL real do repositório:
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone <https://github.com/LaysaCibele/PracaSegura.git>
 cd praca-segura
 ```
 
@@ -209,7 +208,6 @@ A futura camada analítica deverá utilizar os dados de forma responsável, docu
 praca-segura/
 ├── backend/       # API Spring Boot, regras de negócio e persistência
 ├── frontend/      # Aplicação React, componentes e chamadas à API
-├── AGENTS.md      # Instruções de desenvolvimento para o agente, se mantido
 ├── README.md      # Documentação principal
 └── LICENSE        # Licença do código-fonte, se presente
 ```
