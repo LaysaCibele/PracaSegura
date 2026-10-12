@@ -12,6 +12,7 @@ import OccurrenceForm from './components/OccurrenceForm/OccurrenceForm';
 import OccurrenceList from './components/OccurrenceList/OccurrenceList';
 import { getCurrentUser, logout } from './services/authService';
 import SquareManagement from "./components/SquareManagement/SquareManagement";
+import Dashboard from './components/Dashboard/Dashboard';
 
 import './App.css';
 
@@ -74,6 +75,12 @@ function Home() {
 
           <SectionIntro />
           <SquaresSection />
+
+
+        {user && (
+          <Dashboard refreshKey={refreshKey} />
+          )}
+
 
           {user?.role === "GESTOR" && (
         <SquareManagement />

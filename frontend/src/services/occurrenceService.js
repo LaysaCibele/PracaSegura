@@ -1,3 +1,4 @@
+
 const API_URL = '/api/occurrences';
 
 export async function getOccurrences(squareId) {
@@ -47,6 +48,27 @@ export async function updateOccurrenceStatus(id, status) {
 
   if (!response.ok) {
     throw new Error('Não foi possível atualizar o status.');
+  }
+
+  return response.json();
+}
+
+export async function getOccurrenceStats(squareId) {
+  const params = new URLSearchParams();
+
+  if (squareId) {
+    params.set('squareId', squareId);
+  }
+
+  const query = params.toString();
+  const url = query
+    ? `${API_URL}/stats?${query}`
+    : `${API_URL}/stats`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Não foi possível carregar as estatísticas.');
   }
 
   return response.json();

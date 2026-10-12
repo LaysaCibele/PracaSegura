@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.pracasegura.dto.OccurrenceStatsResponse;
 import com.pracasegura.model.AppUser;
 import com.pracasegura.model.Occurrence;
 import com.pracasegura.model.Square;
@@ -98,8 +99,7 @@ public Occurrence updateStatus(Long id, String status) {
     if (status == null || status.isBlank()) {
         throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "O status é obrigatório."
-        );
+                "O status é obrigatório.");
     }
 
     String normalizedStatus = status.trim().toUpperCase(Locale.ROOT);
@@ -107,13 +107,39 @@ public Occurrence updateStatus(Long id, String status) {
     if (!ALLOWED_STATUSES.contains(normalizedStatus)) {
         throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Status inválido. Valores aceitos: " + ALLOWED_STATUSES
-        );
+                "Status inválido. Valores aceitos: " + ALLOWED_STATUSES);
     }
 
     occurrence.setStatus(normalizedStatus);
 
     return occurrenceRepository.save(occurrence);
+}
+
+
+public OccurrenceStatsResponse getStats(Long reporterId, Long squareId) {
+    if (squareId != null && !squareRepository.existsById(squareId)) {
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Praça não encontrada: " + squareId);
+    }
+
+    long total = occurrenceRepository.countOccurrences(reporterId, squareId);
+
+    List<OccurrenceStatsResponse.StatItem> byStatus = occurrenceRepository.countByStatus(reporterId, squareId)
+            .stream()
+            .map(item -> new OccurrenceStatsResponse.StatItem(
+                    item.getLabel(),
+                    item.getTotal()))
+            .toList();
+
+    List<OccurrenceStatsResponse.StatItem> byCategory = occurrenceRepository.countByCategory(reporterId, squareId)
+            .stream()
+            .map(item -> new OccurrenceStatsResponse.StatItem(
+                    item.getLabel(),
+                    item.getTotal()))
+            .toList();
+
+    return new OccurrenceStatsResponse(total, byStatus, byCategory);
 }
 
 }

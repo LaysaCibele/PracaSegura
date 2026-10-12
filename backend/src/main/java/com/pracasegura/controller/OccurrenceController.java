@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.pracasegura.dto.OccurrenceStatsResponse;
 import com.pracasegura.dto.OccurrenceStatusRequest;
 import com.pracasegura.model.AppUser;
 import com.pracasegura.model.Occurrence;
@@ -73,11 +74,23 @@ public List<Occurrence> findAll(
 
     if (squareId != null) {
         return occurrenceService.findByReporterIdAndSquareId(
-                user.getId(), squareId
-        );
+                user.getId(), squareId);
     }
 
     return occurrenceService.findByReporterId(user.getId());
+}
+
+
+@GetMapping("/stats")
+public OccurrenceStatsResponse getStats(
+        @RequestParam(required = false) Long squareId,
+        Authentication authentication) {
+
+    AppUser user = getAuthenticatedUser(authentication);
+
+    Long reporterId = isManager(user) ? null : user.getId();
+
+    return occurrenceService.getStats(reporterId, squareId);
 }
 
 @GetMapping("/{id}")
