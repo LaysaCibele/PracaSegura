@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.pracasegura.dto.OccurrenceCreateRequest;
+import com.pracasegura.dto.OccurrenceResponse;
 import com.pracasegura.dto.OccurrenceStatsResponse;
 import com.pracasegura.dto.OccurrenceStatusRequest;
 import com.pracasegura.model.AppUser;
@@ -58,26 +60,16 @@ private boolean isManager(AppUser user) {
 }
 
 @GetMapping
-public List<Occurrence> findAll(
+public List<OccurrenceResponse> findAll(
         @RequestParam(required = false) Long squareId,
         Authentication authentication) {
 
-    AppUser user = getAuthenticatedUser(authentication);
+    getAuthenticatedUser(authentication);
 
-    if (isManager(user)) {
-        if (squareId != null) {
-            return occurrenceService.findBySquareId(squareId);
-        }
-
-        return occurrenceService.findAll();
-    }
-
-    if (squareId != null) {
-        return occurrenceService.findByReporterIdAndSquareId(
-                user.getId(), squareId);
-    }
-
-    return occurrenceService.findByReporterId(user.getId());
+    List<Occurrence> occurrences = squareId == null
+            ? occurrenceService.findAll()
+            : occurrenceService.findBySquareId(squareId);
+    return occurrences.stream().map(OccurrenceResponse::from).toList();
 }
 
 
@@ -86,15 +78,13 @@ public OccurrenceStatsResponse getStats(
         @RequestParam(required = false) Long squareId,
         Authentication authentication) {
 
-    AppUser user = getAuthenticatedUser(authentication);
+    getAuthenticatedUser(authentication);
 
-    Long reporterId = isManager(user) ? null : user.getId();
-
-    return occurrenceService.getStats(reporterId, squareId);
+    return occurrenceService.getStats(null, squareId);
 }
 
 @GetMapping("/{id}")
-public Occurrence findById(
+public OccurrenceResponse findById(
         @PathVariable Long id,
         Authentication authentication) {
 
@@ -109,23 +99,24 @@ public Occurrence findById(
         );
     }
 
-    return occurrence;
+    return OccurrenceResponse.from(occurrence);
 }
 
 @PostMapping
 @ResponseStatus(HttpStatus.CREATED)
-public Occurrence create(
+public OccurrenceResponse create(
         @RequestParam Long squareId,
-        @Valid @RequestBody Occurrence occurrence,
+        @Valid @RequestBody OccurrenceCreateRequest request,
         Authentication authentication) {
 
     AppUser reporter = getAuthenticatedUser(authentication);
 
-    return occurrenceService.save(squareId, occurrence, reporter);
+    Occurrence saved = occurrenceService.save(squareId, request, reporter);
+    return OccurrenceResponse.from(saved);
 }
 
 @PatchMapping("/{id}/status")
-public Occurrence updateStatus(
+public OccurrenceResponse updateStatus(
         @PathVariable Long id,
         @Valid @RequestBody OccurrenceStatusRequest request,
         Authentication authentication) {
@@ -139,10 +130,8 @@ public Occurrence updateStatus(
         );
     }
 
-    return occurrenceService.updateStatus(
-            id,
-            request.getStatus()
-    );
+    return OccurrenceResponse.from(occurrenceService.updateStatus(
+            id, request.getStatus()));
 }
 
 }

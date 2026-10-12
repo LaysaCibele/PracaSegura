@@ -6,7 +6,7 @@ export async function getOccurrences(squareId) {
     ? `${API_URL}?squareId=${squareId}`
     : API_URL;
 
-  const response = await fetch(url);
+  const response = await fetch(url, { credentials: 'same-origin' });
 
   if (!response.ok) {
     throw new Error('Não foi possível carregar as ocorrências.');
@@ -20,6 +20,7 @@ export async function createOccurrence(occurrence) {
     `${API_URL}?squareId=${occurrence.squareId}`,
     {
       method: 'POST',
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -40,6 +41,7 @@ export async function createOccurrence(occurrence) {
 export async function updateOccurrenceStatus(id, status) {
   const response = await fetch(`${API_URL}/${id}/status`, {
     method: 'PATCH',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -65,7 +67,7 @@ export async function getOccurrenceStats(squareId) {
     ? `${API_URL}/stats?${query}`
     : `${API_URL}/stats`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, { credentials: 'same-origin' });
 
   if (!response.ok) {
     throw new Error('Não foi possível carregar as estatísticas.');

@@ -2,6 +2,9 @@ package com.pracasegura.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.text.Normalizer;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pracasegura.dto.OccurrenceStatsResponse;
+import com.pracasegura.dto.OccurrenceCreateRequest;
 import com.pracasegura.model.AppUser;
 import com.pracasegura.model.Occurrence;
 import com.pracasegura.model.Square;
@@ -78,7 +82,7 @@ public List<Occurrence> findBySquareId(Long squareId) {
 }
 
 public Occurrence save(
-        Long squareId, Occurrence occurrence, AppUser reporter) {
+        Long squareId, OccurrenceCreateRequest request, AppUser reporter) {
 
     Square square = squareRepository.findById(squareId)
             .orElseThrow(() -> new ResponseStatusException(
@@ -86,9 +90,13 @@ public Occurrence save(
                     "Praça não encontrada: " + squareId
             ));
 
+    Occurrence occurrence = new Occurrence();
+    occurrence.setCategory(request.category().trim());
+    occurrence.setDescription(request.description().trim());
     occurrence.setSquare(square);
     occurrence.setReporter(reporter);
     occurrence.setStatus("REGISTRADA");
+    occurrence.setCreatedAt(java.time.LocalDateTime.now());
 
     return occurrenceRepository.save(occurrence);
 }
@@ -132,14 +140,43 @@ public OccurrenceStatsResponse getStats(Long reporterId, Long squareId) {
                     item.getTotal()))
             .toList();
 
-    List<OccurrenceStatsResponse.StatItem> byCategory = occurrenceRepository.countByCategory(reporterId, squareId)
+    Map<String, Long> categoryTotals = new LinkedHashMap<>();
+    Map<String, String> categoryLabels = new LinkedHashMap<>();
+    occurrenceRepository.countByCategory(reporterId, squareId).forEach(item -> {
+        String normalized = normalizeCategory(item.getLabel());
+        String categoryKey = "ilumincao".equals(normalized)
+                ? "iluminacao"
+                : normalized;
+        categoryTotals.merge(categoryKey, item.getTotal(), Long::sum);
+        categoryLabels.putIfAbsent(categoryKey, categoryDisplayLabel(categoryKey, item.getLabel()));
+    });
+
+    List<OccurrenceStatsResponse.StatItem> byCategory = categoryTotals.entrySet()
             .stream()
-            .map(item -> new OccurrenceStatsResponse.StatItem(
-                    item.getLabel(),
-                    item.getTotal()))
+            .map(entry -> new OccurrenceStatsResponse.StatItem(
+                    categoryLabels.get(entry.getKey()),
+                    entry.getValue()))
             .toList();
 
     return new OccurrenceStatsResponse(total, byStatus, byCategory);
+}
+
+private String normalizeCategory(String category) {
+    return Normalizer.normalize(category.trim(), Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toLowerCase(Locale.ROOT);
+}
+
+private String categoryDisplayLabel(String key, String fallback) {
+    return switch (key) {
+        case "iluminacao" -> "Iluminação";
+        case "infraestrutura" -> "Infraestrutura";
+        case "limpeza" -> "Limpeza";
+        case "seguranca" -> "Segurança";
+        case "acessibilidade" -> "Acessibilidade";
+        case "outro" -> "Outro";
+        default -> fallback.trim();
+    };
 }
 
 }

@@ -8,10 +8,16 @@ function Dashboard({ refreshKey, squareId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  function formatCategory(label) {
+    const normalized = label.trim().toLocaleLowerCase('pt-BR');
+    return normalized.charAt(0).toLocaleUpperCase('pt-BR') + normalized.slice(1);
+  }
+
   useEffect(() => {
     let active = true;
 
     async function loadStats() {
+      setStats(null);
       setLoading(true);
       setError('');
 
@@ -101,7 +107,7 @@ function Dashboard({ refreshKey, squareId }) {
             <ul>
               {stats.byCategory.map((item) => (
                 <li key={item.label}>
-                  <span>{item.label}</span>
+                  <span>{formatCategory(item.label)}</span>
                   <strong>{item.total}</strong>
                 </li>
               ))}

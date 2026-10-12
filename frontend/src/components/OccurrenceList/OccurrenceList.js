@@ -39,7 +39,7 @@ function getStatusLabel(status) {
   );
 }
 
-function OccurrenceList({ user, refreshKey }) {
+function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }) {
   const [occurrences, setOccurrences] = useState([]);
   const [statusDrafts, setStatusDrafts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,12 @@ function OccurrenceList({ user, refreshKey }) {
       setError('');
 
       try {
-        const data = await getOccurrences();
+        if (!user) {
+          if (active) setOccurrences([]);
+          return;
+        }
+
+        const data = await getOccurrences(squareId || undefined);
 
         if (active) {
           setOccurrences(data);
@@ -79,7 +84,7 @@ function OccurrenceList({ user, refreshKey }) {
     return () => {
       active = false;
     };
-  }, [refreshKey]);
+  }, [refreshKey, squareId, user]);
 
   function handleStatusChange(id, status) {
     setStatusDrafts((current) => ({
@@ -131,6 +136,7 @@ function OccurrenceList({ user, refreshKey }) {
       setFeedback(
         `Status da ocorrência #${occurrence.id} atualizado com sucesso.`
       );
+      onOccurrenceUpdated?.();
     } catch (err) {
       setError(
         err.message || 'Não foi possível atualizar o status.'
@@ -153,6 +159,7 @@ function OccurrenceList({ user, refreshKey }) {
           Consulte as ocorrências registradas para os espaços públicos
           cadastrados no PraçaSegura.
         </p>
+
       </div>
 
       {loading && (

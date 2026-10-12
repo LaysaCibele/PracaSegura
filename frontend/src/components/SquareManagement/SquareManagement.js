@@ -27,6 +27,7 @@ function SquareManagement() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   async function loadSquares() {
     setLoading(true);
@@ -47,6 +48,8 @@ function SquareManagement() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+
+    if (name === "photoUrl") setPreviewFailed(false);
 
     setForm((current) => ({
       ...current,
@@ -205,15 +208,31 @@ function SquareManagement() {
         </label>
 
         <label>
-          URL da foto
+          URL direta da imagem
           <input
             name="photoUrl"
             type="url"
             value={form.photoUrl}
             onChange={handleChange}
             maxLength={1000}
-            placeholder="https://..."
+            placeholder="https://.../foto.jpg"
+            aria-describedby="square-photo-help"
           />
+          <small id="square-photo-help">
+            Use o link direto do arquivo de imagem (por exemplo, .jpg, .png ou .webp).
+            Links para páginas de resultados do Google Imagens não exibem a foto.
+          </small>
+          {form.photoUrl && !previewFailed && (
+            <img
+              className="square-photo-preview"
+              src={form.photoUrl}
+              alt="Prévia da foto da praça"
+              onError={() => setPreviewFailed(true)}
+            />
+          )}
+          {form.photoUrl && previewFailed && (
+            <small role="status">Não foi possível carregar a prévia deste link.</small>
+          )}
         </label>
 
         <label>

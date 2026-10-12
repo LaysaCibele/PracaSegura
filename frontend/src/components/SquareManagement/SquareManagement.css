@@ -59,6 +59,14 @@
     resize: vertical;
 }
 
+.square-management .square-photo-preview {
+    width: min(100%, 360px);
+    max-height: 220px;
+    object-fit: cover;
+    border: 1px solid #d5ddd7;
+    border-radius: 9px;
+}
+
 .square-management input:focus,
 .square-management textarea:focus {
     outline: none;

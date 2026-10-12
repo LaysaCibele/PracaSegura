@@ -7,6 +7,36 @@ const imagesByName = {
   'Praça da República': '/images/praca-republlica.png',
 };
 
+function SquareImage({ square }) {
+  const image = square.photoUrl || imagesByName[square.name];
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [image]);
+
+  return (
+    <div className="square-card-image">
+      {image && !failed ? (
+        <img
+          src={image}
+          alt={`Praça ${square.name}`}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <div className="square-image-placeholder">
+          <span aria-hidden="true">✳</span>
+          <small>IMAGEM EM BREVE</small>
+        </div>
+      )}
+
+      <span className="square-number">
+        {String(square.id).padStart(2, '0')}
+      </span>
+    </div>
+  );
+}
+
 function SquaresSection() {
   const [squares, setSquares] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,24 +93,9 @@ function SquaresSection() {
       {!loading && !error && squares.length > 0 && (
         <div className="squares-grid">
           {squares.map((square) => {
-            const image = imagesByName[square.name];
-
             return (
               <article className="square-card" key={square.id}>
-                <div className="square-card-image">
-                  {image ? (
-                    <img src={image} alt={square.name} />
-                  ) : (
-                    <div className="square-image-placeholder">
-                      <span aria-hidden="true">✳</span>
-                      <small>IMAGEM EM BREVE</small>
-                    </div>
-                  )}
-
-                  <span className="square-number">
-                    {String(square.id).padStart(2, '0')}
-                  </span>
-                </div>
+                <SquareImage square={square} />
 
                 <div className="square-card-content">
                   <span className="square-neighborhood">

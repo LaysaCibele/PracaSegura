@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login, register } from '../../services/authService';
 import './Login.css';
 
-function Login() {
+function Login({ onAuthenticated }) {
   const navigate = useNavigate();
 
   const [isRegistering, setIsRegistering] = useState(false);
@@ -24,7 +24,8 @@ function Login() {
         await register(name, email, password);
       }
 
-      await login(email, password);
+      const authenticatedUser = await login(email, password);
+      onAuthenticated?.(authenticatedUser);
       navigate('/', { replace: true });
     } catch (err) {
       setError(

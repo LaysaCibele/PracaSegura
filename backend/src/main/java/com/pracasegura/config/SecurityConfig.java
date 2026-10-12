@@ -88,7 +88,7 @@ public SecurityFilterChain securityFilterChain(
                 .authenticated()
 
             .requestMatchers(HttpMethod.POST, "/api/occurrences")
-                .hasAnyRole("CIDADAO", "GESTOR")
+                .hasRole("CIDADAO")
 
             .requestMatchers(HttpMethod.PATCH,
                 "/api/occurrences/*/status")

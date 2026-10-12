@@ -29,3 +29,52 @@
   width: min(1120px, 88%);
   margin: 0 auto;
 }
+
+.app-main {
+  min-height: 60vh;
+}
+
+.app main.app-main {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.page-content {
+  width: min(1120px, 88%);
+  margin: 0 auto;
+  padding: 56px 0 80px;
+}
+
+.page-heading {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.page-heading .section-label {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.page-heading h1 {
+  margin: 0 0 12px;
+  color: var(--color-forest);
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.page-heading p {
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+.route-loading {
+  min-height: 50vh;
+  display: grid;
+  place-items: center;
+}

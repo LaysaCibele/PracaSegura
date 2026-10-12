@@ -1,0 +1,23 @@
+.square-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 420px;
+    margin: 28px 0;
+}
+
+.square-selector label {
+    color: #35443a;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.square-selector select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d6d8d1;
+    border-radius: 8px;
+    background: #fff;
+    color: #253b30;
+    font: inherit;
+}

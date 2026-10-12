@@ -31,11 +31,11 @@ List<OccurrenceCount> countByStatus(
 );
 
 @Query("""
-    SELECT o.category AS label, COUNT(o) AS total
+    SELECT LOWER(TRIM(o.category)) AS label, COUNT(o) AS total
     FROM Occurrence o
     WHERE (:reporterId IS NULL OR o.reporter.id = :reporterId)
       AND (:squareId IS NULL OR o.square.id = :squareId)
-    GROUP BY o.category
+    GROUP BY LOWER(TRIM(o.category))
     """)
 List<OccurrenceCount> countByCategory(
         @Param("reporterId") Long reporterId,
