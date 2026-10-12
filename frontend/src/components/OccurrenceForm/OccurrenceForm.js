@@ -16,9 +16,9 @@ const categories = [
   'Outro',
 ];
 
-function OccurrenceForm({ user, onCreated }) {
+function OccurrenceForm({ user, onCreated, fixedSquareId = '' }) {
   const [squares, setSquares] = useState([]);
-  const [squareId, setSquareId] = useState('');
+  const [squareId, setSquareId] = useState(fixedSquareId ? String(fixedSquareId) : '');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [loadingSquares, setLoadingSquares] = useState(true);
@@ -31,6 +31,7 @@ function OccurrenceForm({ user, onCreated }) {
       try {
         const data = await getSquares();
         setSquares(data);
+        if (fixedSquareId) setSquareId(String(fixedSquareId));
       } catch {
         setError('Não foi possível carregar as praças. Tente novamente.');
       } finally {
@@ -39,7 +40,7 @@ function OccurrenceForm({ user, onCreated }) {
     }
 
     loadSquares();
-  }, []);
+  }, [fixedSquareId]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -117,7 +118,7 @@ function OccurrenceForm({ user, onCreated }) {
               value={squareId}
               onChange={(event) => setSquareId(event.target.value)}
               required
-              disabled={loadingSquares || squares.length === 0}
+              disabled={Boolean(fixedSquareId) || loadingSquares || squares.length === 0}
             >
               <option value="">
                 {loadingSquares

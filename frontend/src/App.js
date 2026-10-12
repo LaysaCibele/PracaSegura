@@ -18,6 +18,7 @@ import SquareManagement from './components/SquareManagement/SquareManagement';
 import SquareSelector from './components/SquareSelector/SquareSelector';
 import SquaresSection from './components/SquaresSection/SquaresSection';
 import Login from './pages/Login/Login';
+import SquareDetails from './pages/SquareDetails/SquareDetails';
 import { getCurrentUser, logout } from './services/authService';
 import { getSquares } from './services/squareService';
 
@@ -151,6 +152,10 @@ function AppRoutes() {
         />
       }>
         <Route path="/" element={<HomePage />} />
+        <Route
+          path="/pracas/:id"
+          element={<SquareDetails user={user} refreshKey={refreshKey} onRefresh={refreshData} />}
+        />
         <Route
           path="/ocorrencias"
           element={

@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getSquares } from '../../services/squareService';
 import './SquaresSection.css';
 
@@ -119,19 +120,9 @@ function SquaresSection() {
                       Cadastro registrado
                     </span>
 
-                    <button
-                      type="button"
-                      className="square-details-button"
-                      onClick={() =>
-                        alert(
-                          `Praça: ${square.name}\n` +
-                          `Bairro: ${square.neighborhood || 'Não informado'}\n` +
-                          `Endereço: ${square.address || 'Não informado'}`
-                        )
-                      }
-                    >
+                    <Link to={`/pracas/${square.id}`} className="square-details-button">
                       Ver detalhes ↗
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </article>

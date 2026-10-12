@@ -1,137 +1,149 @@
 # PraçaSegura
 
-Plataforma web para consulta e acompanhamento de praças públicas e ocorrências cadastradas no Recife, desenvolvida a partir do desafio **“Ampliação da segurança em praças públicas via tecnologia”**, da Prefeitura do Recife.
+**MVP criado em resposta ao desafio público de ampliar a segurança e o uso das praças do Recife por meio da tecnologia.** A plataforma organiza ocorrências e informações descritivas sobre iluminação para apoiar o acompanhamento dos espaços públicos.
 
-O projeto busca centralizar informações sobre ocorrências em espaços públicos, facilitando o acompanhamento pelos cidadãos e apoiando a gestão municipal.
+## Sobre o projeto
 
-## 1. Sobre o projeto
+O PraçaSegura reúne informações de praças públicas do Recife e ocorrências registradas por cidadãos. A aplicação permite acompanhar os registros por praça, enquanto gestores mantêm os cadastros e atualizam o status das ocorrências.
 
-O PraçaSegura permite consultar praças, registrar ocorrências associadas a esses espaços e acompanhar o andamento dos registros. A aplicação possui perfis de cidadão e gestor, com permissões diferentes para proteger as operações administrativas.
+Na página de detalhes de cada praça, a aplicação apresenta a quantidade de registros de iluminação pública localizados dentro do perímetro geográfico mapeado. O inventário não informa se a luminária está funcionando; por isso, o número não é tratado como contagem confirmada de postes únicos nem como medida de segurança.
 
-A proposta também prevê uma futura camada de Ciência de Dados para analisar informações públicas sobre iluminação, infraestrutura urbana e outros indicadores relevantes, conforme a disponibilidade e a qualidade dos dados.
+## Desafio público de origem
 
-**Escopo atual:** aplicação web com React, Spring Boot e PostgreSQL. A implementação da camada analítica ainda está planejada.
+O projeto parte do desafio da Prefeitura do Recife **“Ampliação da segurança em praças públicas via tecnologia”**, publicado em 10/12/2025 e apresentado como desafio público em aberto. O cenário descrito relaciona a subutilização de praças à percepção de insegurança e aponta monitoramento e iluminação eficiente como aspectos do problema.
 
-## 2. Funcionalidades implementadas
+O desafio estabelece como objetivo de longo prazo **aumentar em 40% o uso das praças públicas** por meio de soluções que melhorem a percepção de segurança e promovam a convivência social. Entre os resultados esperados estão maior uso dos espaços, melhoria da sensação de segurança e redução da criminalidade. Os indicadores propostos incluem frequência de usuários, ocorrências criminais, tempo de resposta, percepção de segurança e funcionamento de equipamentos.
 
-### Cidadão
+O PraçaSegura oferece uma base digital de consulta e acompanhamento que pode apoiar esse objetivo. A meta de 40% e os resultados esperados pertencem ao desafio público: **não foram medidos nem validados por este MVP**. A aplicação não tem dados de frequência de usuários, pesquisa de percepção, registros oficiais de criminalidade ou telemetria que confirme o funcionamento das luminárias. Assim, não é possível afirmar que o sistema já aumentou o uso ou a segurança das praças.
 
-* Cadastro de conta, login e logout por sessão.
-* Consulta pública das praças disponíveis.
-* Registro de ocorrências por usuários autenticados.
-* Associação de cada ocorrência à praça selecionada no formulário.
-* Consulta autenticada de ocorrências de todas as praças ou filtradas por uma praça específica.
-* Consulta individual limitada às próprias ocorrências.
-* Acompanhamento do status das ocorrências.
+O desafio também identifica riscos como vandalismo, custos de manutenção, privacidade, dependência tecnológica e necessidade de monitoramento contínuo. O tratamento desses riscos depende de medidas operacionais e institucionais além das funcionalidades atuais do MVP.
 
-### Gestor
+O desafio relaciona-se aos **ODS 3 — Saúde e bem-estar**, **ODS 11 — Cidades e comunidades sustentáveis** e **ODS 16 — Paz, justiça e instituições eficazes**, conforme a página de origem.
 
-* Consulta de praças e gerenciamento por meio de criação, edição e exclusão.
-* Consulta de ocorrências de diferentes praças.
-* Filtragem das ocorrências por praça.
-* Dashboard com indicadores por status e categoria, filtráveis pela praça selecionada.
-* Consulta individual de ocorrências.
-* Atualização do status dos registros.
+## Funcionalidades
 
-### Segurança e integridade dos dados
+### Cidadãos
 
-* O cadastro público cria contas com perfil de cidadão.
-* As operações administrativas de praças e a alteração do status das ocorrências são restritas ao gestor.
-* O autor, a praça associada e a data de criação da ocorrência são definidos pelo servidor durante o registro.
-* As respostas das ocorrências utilizam DTOs, evitando a exposição de senha, e-mail e nome do autor.
-* A listagem geral de ocorrências e o dashboard exigem autenticação.
+- Criar conta, entrar e sair da aplicação.
+- Consultar as praças cadastradas e seus detalhes.
+- Ver ocorrências de todas as praças ou filtrar por uma praça específica. A consulta exige autenticação.
+- Registrar uma ocorrência associada à praça selecionada.
+- Acompanhar o status das ocorrências.
+- Consultar os detalhes individuais apenas das próprias ocorrências.
 
-## 3. Tecnologias utilizadas
+### Gestores
 
-| Camada             | Tecnologias                                                                                    |
-| ------------------ | ---------------------------------------------------------------------------------------------- |
-| Frontend           | React 19.3.0, JavaScript, React Router 7.18.4 e CSS                                            |
-| Backend            | Java 21, Spring Boot 4.1.1, Spring Web MVC, Spring Data JPA, Spring Security e Bean Validation |
-| Banco de dados     | PostgreSQL                                                                                     |
-| Build do backend   | Maven e Maven Wrapper                                                                          |
-| Controle de versão | Git e GitHub                                                                                   |
+- Criar, editar e excluir praças.
+- Consultar ocorrências de todas as praças ou filtrar por praça.
+- Ver indicadores de ocorrências por status e categoria.
+- Atualizar o status de uma ocorrência.
+- Consultar os detalhes individuais das ocorrências.
 
-As versões indicadas devem ser conferidas nos arquivos de configuração do projeto caso sejam alteradas durante o desenvolvimento.
+O cadastro público cria contas de cidadão. O servidor define o autor, a praça associada e a data de criação de cada ocorrência. As respostas das ocorrências usam DTOs sem senha ou dados pessoais desnecessários do autor.
 
-## 4. Arquitetura
+## Indicador público de iluminação
 
-A aplicação segue uma arquitetura cliente-servidor, organizada em três camadas principais:
+O pipeline em `data-science/` cruza os pontos do inventário de iluminação pública de 2025 com os polígonos municipais identificados para as quatro praças. O relatório agregado usado pelo frontend está em `frontend/public/data/urban-indicators.json`.
 
-1. **Frontend — React:** apresenta as interfaces, recebe as interações e realiza chamadas à API.
-2. **Backend — Spring Boot:** disponibiliza os endpoints REST, aplica as regras de negócio, valida as requisições e controla as permissões.
-3. **Banco de dados — PostgreSQL:** armazena as informações persistentes utilizadas pela aplicação.
+| Praça | Registros do inventário dentro do perímetro |
+| --- | ---: |
+| Praça de Casa Forte | 42 |
+| Praça de Boa Viagem | 58 |
+| Praça do Derby | 227 |
+| Parque da Jaqueira | 295 |
 
-O frontend utiliza o prefixo `/api` para encaminhar as chamadas ao backend, configurado por padrão em `http://localhost:8080`.
+O relatório foi gerado em 12/10/2026. Na consulta, o CSV e o índice CKAN informavam 111.666 registros. A fonte é a [EMLURB — Inventário de Iluminação Pública do Recife, 2025](https://dados.recife.pe.gov.br/dataset/postes-iluminacao-publica-do-recife/resource/76cb7e65-1362-4ea7-ac04-453d67e41c64), publicada sob licença [ODbL](https://opendatacommons.org/licenses/odbl/).
 
-A futura camada de Ciência de Dados será integrada à arquitetura após o levantamento e a avaliação das fontes disponíveis.
+As contagens são linhas do inventário localizadas nos polígonos. Elas podem incluir registros repetidos e não indicam funcionamento, intensidade ou cobertura da iluminação. Não existe variável-alvo validada para estimar risco ou criminalidade. Os dados do 156 não são exibidos: a auditoria encontrou divergência entre o tamanho do CSV e o índice CKAN, além de limitações de cobertura geográfica e temporal. Consulte [data-science/README.md](data-science/README.md) para fontes, auditoria, metodologia e limitações.
 
-## 5. Rotas da API
+### Regenerar o relatório espacial
 
-As rotas abaixo descrevem o contrato previsto para a aplicação. Os acessos indicados devem corresponder às regras efetivamente aplicadas no backend.
+Requer Python 3.11 ou mais recente e acesso à internet. O processo lê os dados públicos em streaming, mantém as linhas brutas em memória e grava somente o relatório agregado.
 
-| Método e rota                              | Acesso              | Finalidade                            |
-| ------------------------------------------ | ------------------- | ------------------------------------- |
-| `POST /api/auth/register`                  | Público             | Cadastrar conta de cidadão            |
-| `POST /api/auth/login`                     | Público             | Iniciar sessão                        |
-| `GET /api/auth/me`                         | Autenticado         | Consultar o perfil da sessão          |
-| `POST /api/auth/logout`                    | Autenticado         | Encerrar sessão                       |
-| `GET /api/health`                          | Público             | Verificar a disponibilidade da API    |
-| `GET /api/squares`                         | Público             | Listar praças                         |
-| `GET /api/squares/{id}`                    | Público             | Consultar uma praça                   |
-| `POST /api/squares`                        | Gestor              | Criar praça                           |
-| `PUT /api/squares/{id}`                    | Gestor              | Editar praça                          |
-| `DELETE /api/squares/{id}`                 | Gestor              | Excluir praça                         |
-| `GET /api/occurrences`                     | Autenticado         | Listar ocorrências de todas as praças |
-| `GET /api/occurrences?squareId={id}`       | Autenticado         | Filtrar ocorrências por praça         |
-| `GET /api/occurrences/stats`               | Autenticado         | Consultar indicadores gerais          |
-| `GET /api/occurrences/stats?squareId={id}` | Autenticado         | Consultar indicadores de uma praça    |
-| `GET /api/occurrences/{id}`                | Autor ou gestor     | Consultar ocorrência individual       |
-| `POST /api/occurrences?squareId={id}`      | Cidadão autenticado | Registrar ocorrência                  |
-| `PATCH /api/occurrences/{id}/status`       | Gestor              | Atualizar status da ocorrência        |
+No PowerShell, a partir da raiz do repositório:
 
-O cadastro público não permite escolher o perfil de gestor. Os dados pessoais do autor não devem ser expostos nas respostas destinadas à consulta de ocorrências.
+```powershell
+$env:PYTHONPATH = "data-science/src"
+python -m pracasegura_ds.spatial_audit --sources postes --output frontend/public/data/urban-indicators.json
+```
 
-## 6. Como executar localmente
+O frontend lê esse JSON estático. Não foi criado um endpoint analítico no backend; o indicador não altera autenticação, permissões nem os dados das ocorrências.
+
+## Tecnologias
+
+| Camada | Tecnologias |
+| --- | --- |
+| Frontend | React 19, JavaScript, React Router 7 e CSS |
+| Backend | Java 21, Spring Boot 4.1, Spring MVC, Spring Data JPA, Spring Security e Bean Validation |
+| Banco de dados | PostgreSQL |
+| Ciência de Dados | Python 3.11+, biblioteca padrão; auditoria CSV/CKAN e cruzamento geográfico |
+| Testes | React Testing Library/Jest, testes Java com Maven e `unittest` para Python |
+
+As versões exatas estão nos arquivos de configuração do frontend e do backend.
+
+## Arquitetura
+
+```text
+React (frontend) ── /api ──> Spring Boot (backend) ──> PostgreSQL
+       │
+       └── relatório agregado estático de iluminação
+           frontend/public/data/urban-indicators.json
+
+Python (data-science) ── Portal de Dados Abertos do Recife
+       └── gera o relatório agregado consumido pelo frontend
+```
+
+O frontend utiliza o proxy de desenvolvimento para encaminhar `/api` a `http://localhost:8080`. O inventário de iluminação é servido como arquivo estático do frontend; os dados brutos não são persistidos pelo pipeline.
+
+## API principal
+
+| Método e rota | Acesso | Finalidade |
+| --- | --- | --- |
+| `POST /api/auth/register` | Público | Cadastro de cidadão |
+| `POST /api/auth/login` | Público | Iniciar sessão |
+| `GET /api/auth/me` | Autenticado | Consultar a sessão atual |
+| `POST /api/auth/logout` | Autenticado | Encerrar sessão |
+| `GET /api/health` | Público | Verificar disponibilidade |
+| `GET /api/squares` e `GET /api/squares/{id}` | Público | Consultar praças |
+| `POST`, `PUT`, `DELETE /api/squares...` | Gestor | Administrar praças |
+| `GET /api/occurrences` | Autenticado | Consultar ocorrências de todas as praças |
+| `GET /api/occurrences?squareId={id}` | Autenticado | Filtrar ocorrências por praça |
+| `GET /api/occurrences/stats[?squareId={id}]` | Autenticado | Consultar indicadores de ocorrências |
+| `GET /api/occurrences/{id}` | Autor ou gestor | Consultar uma ocorrência |
+| `POST /api/occurrences?squareId={id}` | Cidadão autenticado | Registrar ocorrência |
+| `PATCH /api/occurrences/{id}/status` | Gestor | Atualizar status |
+
+## Executar localmente
 
 ### Pré-requisitos
 
-* Git.
-* Node.js e npm.
-* Java 21.
-* PostgreSQL.
-* Maven instalado ou Maven Wrapper disponível no repositório.
+- Git
+- Node.js e npm
+- Java 21
+- PostgreSQL
+- Python 3.11+ (para executar ou regenerar o relatório analítico)
 
-### 6.1. Clonar o repositório
-
-Substitua o endereço pelo URL real do repositório:
+### Clonar o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd praca-segura
+git clone https://github.com/LaysaCibele/PracaSegura.git
+cd PracaSegura
 ```
 
-### 6.2. Configurar o banco de dados
+### Configurar e iniciar o backend
 
-Crie uma instância e um banco PostgreSQL e configure a URL de conexão, o usuário e a senha conforme as propriedades do backend em:
-
-`backend/src/main/resources/application.properties`
-
-Não publique credenciais reais no repositório. Prefira variáveis de ambiente ou outra configuração local segura, conforme o suporte implementado pelo projeto.
-
-### 6.3. Iniciar o backend
-
-Em um terminal, execute:
+Configure a conexão local com PostgreSQL em `backend/src/main/resources/application.properties`. Use credenciais locais e não publique segredos.
 
 ```powershell
 cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
-O backend utiliza, por padrão, a porta `8080`, salvo configuração diferente.
+O backend usa a porta `8080` por padrão.
 
-### 6.4. Iniciar o frontend
+### Iniciar o frontend
 
-Em outro terminal, na raiz do repositório:
+Em outro terminal:
 
 ```bash
 cd frontend
@@ -139,91 +151,51 @@ npm install
 npm start
 ```
 
-O frontend React geralmente estará disponível em `http://localhost:3000`.
+A aplicação React fica disponível em `http://localhost:3000`. Mantenha o backend e o PostgreSQL em execução para usar autenticação, ocorrências e dashboard.
 
-Mantenha o backend em execução para que as chamadas `/api` possam ser atendidas.
+**Docker:** o repositório não contém Docker Compose ou Dockerfile configurado como fluxo de execução local.
 
-**Docker:** o repositório não possui atualmente um arquivo Docker Compose documentado como fluxo pronto para executar a aplicação e o banco de dados.
+## Testes
 
-## 7. Testes e validação
-
-### Frontend
-
-Na pasta `frontend`, execute:
+Frontend, na pasta `frontend`:
 
 ```bash
 npm test -- --watchAll=false
 npm run build
 ```
 
-### Backend
-
-Na pasta `backend`, execute no Windows:
+Backend, na pasta `backend` (Windows):
 
 ```powershell
 .\mvnw.cmd test
 ```
 
-Os testes de backend descritos para o projeto abrangem consulta geral e filtrada de ocorrências, restrições de consulta individual, atualização de status, contrato dos DTOs e definição de autor, praça e data pelo servidor.
+Pipeline de Ciência de Dados, na pasta `data-science`:
 
-A execução dos comandos deve ser realizada antes de declarar a versão validada. Registre eventuais falhas, dependências necessárias e correções pendentes.
+```powershell
+$env:PYTHONPATH = "src"
+python -m unittest discover -s tests -v
+```
 
-### Verificação funcional
+## Segurança e limites
 
-Além dos testes automatizados, confira manualmente:
+- A listagem de ocorrências e os indicadores do dashboard exigem autenticação; detalhes individuais são limitados ao autor ou ao gestor.
+- Cidadãos podem registrar ocorrências; apenas gestores podem administrar praças e alterar status.
+- A configuração atual do Spring Security desativa CSRF para o MVP local. Revise essa configuração antes de disponibilizar a aplicação publicamente.
+- Os relatos de usuários e o inventário público são fontes descritivas. Não constituem confirmação oficial de fatos, criminalidade ou risco.
+- Este repositório não contém modelo de Machine Learning nem classificação de segurança.
 
-* Cadastro, login e logout.
-* Consulta e administração de praças.
-* Registro e consulta de ocorrências.
-* Filtros por praça e sincronização com o dashboard.
-* Permissões de cidadão e gestor.
-* Integridade dos dados retornados pela API.
-
-## 8. Ciência de Dados — próxima etapa
-
-A camada de Ciência de Dados **ainda não está implementada**. Não há, nesta versão, pipeline analítico, modelo preditivo, índice de segurança validado ou integração com bases públicas.
-
-A próxima fase está planejada para incluir:
-
-1. **Levantamento de dados públicos:** pesquisar fontes oficiais sobre iluminação pública, infraestrutura urbana, praças e outros indicadores relevantes do Recife.
-2. **Avaliação das fontes:** verificar licença, cobertura geográfica, atualização, qualidade, disponibilidade e possibilidade de relacionar os dados às praças.
-3. **Preparação e análise exploratória:** tratar valores ausentes, duplicidades e inconsistências; integrar as fontes compatíveis e analisar os dados.
-4. **Definição metodológica:** determinar quais indicadores podem ser calculados ou quais modelos podem ser construídos com os dados realmente disponíveis.
-5. **Implementação e validação:** desenvolver a solução analítica, definir métricas adequadas e documentar resultados e limitações.
-6. **Integração com a aplicação:** disponibilizar os resultados por meio do backend e apresentá-los no frontend, quando tecnicamente viável.
-7. **Documentação:** registrar fontes, decisões de tratamento, metodologia, testes e instruções para reproduzir a análise.
-
-A escolha entre indicadores, análise espacial, métodos não supervisionados ou aprendizado supervisionado dependerá das características das bases encontradas e da existência de dados adequados para validar a abordagem.
-
-Estimativas analíticas não devem ser tratadas como comprovação de criminalidade ou de risco real. Correlações entre iluminação, infraestrutura e ocorrências, por exemplo, não demonstram por si só relações causais.
-
-## 9. Privacidade e responsabilidade
-
-O PraçaSegura deve aplicar as permissões definidas para cada perfil e evitar a exposição desnecessária de dados pessoais.
-
-A futura camada analítica deverá utilizar os dados de forma responsável, documentar limitações e respeitar as condições de uso das fontes. A interpretação dos resultados deverá considerar a qualidade, a cobertura e possíveis vieses dos dados.
-
-## 10. Estrutura principal do repositório
+## Estrutura do repositório
 
 ```text
 praca-segura/
-├── backend/       # API Spring Boot, regras de negócio e persistência
-├── frontend/      # Aplicação React, componentes e chamadas à API
-├── AGENTS.md      # Instruções de desenvolvimento para o agente, se mantido
-├── README.md      # Documentação principal
-└── LICENSE        # Licença do código-fonte, se presente
+├── backend/       # API Spring Boot e persistência
+├── frontend/      # Interface React e relatório agregado público
+├── data-science/  # Auditoria e análise espacial reproduzível
+├── README.md
+└── LICENSE
 ```
 
-A estrutura exata pode variar conforme a organização dos arquivos e a evolução do projeto.
+## Autoria e licença
 
-## 11. Licença
-
-O código-fonte é disponibilizado sob a licença MIT, conforme o arquivo `LICENSE`, caso presente no repositório.
-
-Os dados e as imagens utilizados no projeto permanecem sujeitos às licenças e condições de suas fontes originais.
-
-## Autoria
-
-**Laysa Cibele**
-
-Projeto acadêmico desenvolvido a partir do desafio de ampliação da segurança em praças públicas por meio da tecnologia, da Prefeitura do Recife.
+Projeto acadêmico de **Laysa Cibele**, baseado no desafio de ampliação da segurança em praças públicas por tecnologia, da Prefeitura do Recife. O código está sob licença MIT, conforme o arquivo `LICENSE`. Os dados públicos e imagens permanecem sujeitos às licenças de suas fontes.
