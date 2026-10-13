@@ -123,21 +123,12 @@ O frontend utiliza o proxy de desenvolvimento para encaminhar `/api` a `http://l
 - Java 21
 - PostgreSQL
 - Python 3.11+ (para executar ou regenerar o relatório analítico)
-
-<<<<<<< HEAD
+- 
 ### Clonar o repositório
 
 ```bash
 git clone https://github.com/LaysaCibele/PracaSegura.git
 cd PracaSegura
-=======
-### 6.1. Clonar o repositório
-
-
-```bash
-git clone <https://github.com/LaysaCibele/PracaSegura.git>
-cd praca-segura
->>>>>>> e91fbcf2b5b1696633652f595268003a25fc8529
 ```
 
 ### Configurar e iniciar o backend
