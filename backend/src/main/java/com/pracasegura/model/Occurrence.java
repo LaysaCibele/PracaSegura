@@ -38,6 +38,15 @@ private LocalDateTime createdAt;
 @Column(nullable = false, length = 30)
 private String status = "REGISTRADA";
 
+@Column(length = 16)
+private String origin = "REAL";
+
+@Column(unique = true, length = 100)
+private String externalKey;
+
+@Column
+private LocalDateTime resolvedAt;
+
 @ManyToOne(optional = false)
 @JoinColumn(name = "square_id", nullable = false)
 private Square square;
@@ -57,6 +66,9 @@ public void prePersist() {
 
     if (status == null || status.isBlank()) {
         status = "REGISTRADA";
+    }
+    if (origin == null || origin.isBlank()) {
+        origin = "REAL";
     }
 }
 
@@ -95,6 +107,18 @@ public String getStatus() {
 public void setStatus(String status) {
     this.status = status;
 }
+
+public String getOrigin() { return origin; }
+
+public void setOrigin(String origin) { this.origin = origin; }
+
+public String getExternalKey() { return externalKey; }
+
+public void setExternalKey(String externalKey) { this.externalKey = externalKey; }
+
+public LocalDateTime getResolvedAt() { return resolvedAt; }
+
+public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 
 public Square getSquare() {
     return square;

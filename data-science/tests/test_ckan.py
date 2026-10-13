@@ -4,7 +4,13 @@ import unittest
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
-from pracasegura_ds.ckan import CKANError, get_datastore_total, iter_csv_records, iter_records
+from pracasegura_ds.ckan import (
+    CKANError,
+    get_datastore_total,
+    iter_csv_records,
+    iter_csv_records_with_audit,
+    iter_records,
+)
 
 
 class CKANPaginationTests(unittest.TestCase):
@@ -35,6 +41,15 @@ class CKANPaginationTests(unittest.TestCase):
         urlopen.return_value = io.BytesIO("nome;latitude\nPraça; -8,05\n".encode("utf-8"))
         records = list(iter_csv_records("https://dados.recife.pe.gov.br/public.csv"))
         self.assertEqual(records, [{"nome": "Praça", "latitude": " -8,05"}])
+
+    @patch("pracasegura_ds.ckan.urlopen")
+    def test_counts_and_excludes_malformed_csv_rows(self, urlopen):
+        body = "id;latitude;longitude\n1;-8;-34\n2;-8;-34;extra\n3;-8\n"
+        urlopen.return_value = io.BytesIO(body.encode("utf-8"))
+        audit = {}
+        records = list(iter_csv_records_with_audit("https://dados.recife.pe.gov.br/public.csv", audit))
+        self.assertEqual(records, [{"id": "1", "latitude": "-8", "longitude": "-34"}])
+        self.assertEqual(audit, {"rows": 3, "malformed_rows": 2})
 
     @patch("pracasegura_ds.ckan.urlopen")
     def test_reads_datastore_total_separately(self, urlopen):

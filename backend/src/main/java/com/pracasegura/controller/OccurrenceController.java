@@ -1,6 +1,7 @@
 package com.pracasegura.controller;
 
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -62,20 +63,15 @@ private boolean isManager(AppUser user) {
 @GetMapping
 public List<OccurrenceResponse> findAll(
         @RequestParam(required = false) Long squareId,
+        @RequestParam(required = false) LocalDate from,
+        @RequestParam(required = false) LocalDate to,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String status,
         Authentication authentication) {
 
     AppUser user = getAuthenticatedUser(authentication);
-
-    List<Occurrence> occurrences;
-    if (isManager(user)) {
-        occurrences = squareId == null
-                ? occurrenceService.findAll()
-                : occurrenceService.findBySquareId(squareId);
-    } else {
-        occurrences = squareId == null
-                ? occurrenceService.findByReporterId(user.getId())
-                : occurrenceService.findByReporterIdAndSquareId(user.getId(), squareId);
-    }
+    List<Occurrence> occurrences = occurrenceService.getFilteredOccurrences(
+            user, isManager(user), squareId, from, to, category, status);
     return occurrences.stream().map(OccurrenceResponse::from).toList();
 }
 
@@ -83,11 +79,17 @@ public List<OccurrenceResponse> findAll(
 @GetMapping("/stats")
 public OccurrenceStatsResponse getStats(
         @RequestParam(required = false) Long squareId,
+        @RequestParam(required = false) LocalDate from,
+        @RequestParam(required = false) LocalDate to,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String status,
         Authentication authentication) {
 
-    getAuthenticatedUser(authentication);
-
-    return occurrenceService.getStats(null, squareId);
+    AppUser user = getAuthenticatedUser(authentication);
+    if (!isManager(user)) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Indicadores de ocorrências disponíveis apenas para gestores.");
+    }
+    return occurrenceService.getFilteredStats(user, isManager(user), squareId, from, to, category, status);
 }
 
 @GetMapping("/{id}")
@@ -99,7 +101,7 @@ public OccurrenceResponse findById(
     Occurrence occurrence = occurrenceService.findById(id);
 
     if (!isManager(user)
-            && !occurrence.getReporter().getId().equals(user.getId())) {
+            && (occurrence.getReporter() == null || !occurrence.getReporter().getId().equals(user.getId()))) {
         throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "Você não tem permissão para consultar esta ocorrência."

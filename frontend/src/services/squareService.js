@@ -44,6 +44,10 @@ export async function getSquareById(id) {
   return request(`${API_URL}/${id}`);
 }
 
+export async function getSquareRecommendation(id) {
+  return request(`${API_URL}/${id}/recommendation`);
+}
+
 export async function createSquare(square) {
   return request(API_URL, {
     method: "POST",

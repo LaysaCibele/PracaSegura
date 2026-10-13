@@ -10,6 +10,8 @@ public record OccurrenceResponse(
         String description,
         LocalDateTime createdAt,
         String status,
+        String origin,
+        LocalDateTime resolvedAt,
         SquareSummary square
 ) {
     public static OccurrenceResponse from(Occurrence occurrence) {
@@ -19,6 +21,8 @@ public record OccurrenceResponse(
                 occurrence.getDescription(),
                 occurrence.getCreatedAt(),
                 occurrence.getStatus(),
+                occurrence.getOrigin() == null ? "REAL" : occurrence.getOrigin(),
+                occurrence.getResolvedAt(),
                 new SquareSummary(
                         occurrence.getSquare().getId(),
                         occurrence.getSquare().getName(),

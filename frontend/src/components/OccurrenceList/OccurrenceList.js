@@ -39,7 +39,7 @@ function getStatusLabel(status) {
   );
 }
 
-function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }) {
+function OccurrenceList({ user, refreshKey, squareId = '', filters, onOccurrenceUpdated }) {
   const [occurrences, setOccurrences] = useState([]);
   const [statusDrafts, setStatusDrafts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -62,10 +62,10 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
           return;
         }
 
-        const data = await getOccurrences(squareId || undefined);
+        const data = await getOccurrences({ ...(filters || {}), squareId: squareId || undefined });
 
         if (active) {
-          setOccurrences(data);
+          setOccurrences(isManager ? data : data.filter((item) => item.origin !== 'SINTETICA'));
           setStatusDrafts({});
         }
       } catch {
@@ -84,7 +84,7 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
     return () => {
       active = false;
     };
-  }, [refreshKey, squareId, user]);
+  }, [refreshKey, squareId, user, filters, isManager]);
 
   function handleStatusChange(id, status) {
     setStatusDrafts((current) => ({
@@ -153,13 +153,13 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
           04 — ACOMPANHAMENTO
         </span>
 
-        <h2>{isManager ? 'Registros recentes.' : user ? 'Minhas ocorrências.' : 'Acompanhamento.'}</h2>
+        <h2>{isManager ? 'Registros recentes.' : user ? 'Meus relatos.' : 'Acompanhamento.'}</h2>
 
         <p>
           {isManager
             ? 'Consulte as ocorrências registradas para os espaços públicos cadastrados no PraçaSegura.'
             : user
-              ? 'Acompanhe o status das ocorrências que você registrou.'
+              ? 'Acompanhe apenas os relatos que você registrou.'
               : 'Entre na sua conta para ver seu dashboard e acompanhar seus registros.'}
         </p>
 
@@ -173,8 +173,8 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
         <p role="alert">{error}</p>
       )}
 
-      {!loading && !error && user && occurrences.length === 0 && (
-        <p>{isManager ? 'Nenhuma ocorrência registrada até o momento.' : 'Você ainda não registrou ocorrências.'}</p>
+        {!loading && !error && user && occurrences.length === 0 && (
+        <p>{isManager ? 'Nenhuma ocorrência registrada até o momento.' : 'Você ainda não tem relatos neste filtro.'}</p>
       )}
 
       {feedback && (
@@ -200,6 +200,10 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
                   <span className="occurrence-category">
                     {occurrence.category}
                   </span>
+
+                  {occurrence.origin === 'SINTETICA' && (
+                    <span className="occurrence-origin-badge">DADO SINTÉTICO · DEMONSTRAÇÃO</span>
+                  )}
 
                   <span className="occurrence-status">
                     {getStatusLabel(occurrence.status)}
@@ -282,12 +286,7 @@ function OccurrenceList({ user, refreshKey, squareId = '', onOccurrenceUpdated }
         </p>
       )}
 
-      <p className="occurrence-list-disclaimer">
-        Os registros podem incluir dados demonstrativos utilizados
-        nos testes do sistema. Eles não constituem confirmação de
-        ocorrências reais nem avaliação oficial de segurança.
-      </p>
-    </section>
+      </section>
   );
 }
 

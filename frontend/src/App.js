@@ -13,6 +13,7 @@ import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import OccurrenceForm from './components/OccurrenceForm/OccurrenceForm';
 import OccurrenceList from './components/OccurrenceList/OccurrenceList';
+import OccurrenceFilters from './components/OccurrenceFilters/OccurrenceFilters';
 import SectionIntro from './components/SectionIntro/SectionIntro';
 import SquareManagement from './components/SquareManagement/SquareManagement';
 import SquareSelector from './components/SquareSelector/SquareSelector';
@@ -36,7 +37,7 @@ function HomePage() {
   );
 }
 
-function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, onRefresh }) {
+function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, onRefresh, filters, onFiltersChange }) {
   return (
     <div className="page-content">
       <header className="page-heading">
@@ -45,8 +46,8 @@ function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, 
         <p>{user?.role === 'GESTOR'
           ? 'Consulte registros de todas as praças ou filtre por um espaço específico.'
           : user
-            ? 'Acompanhe suas ocorrências e consulte o resumo agregado por praça.'
-            : 'Entre na sua conta para consultar o dashboard e acompanhar suas próprias ocorrências.'}</p>
+            ? 'Consulte apenas os relatos que você registrou e envie um novo relato.'
+            : 'Entre na sua conta para consultar e registrar seus próprios relatos.'}</p>
       </header>
 
       <SquareSelector
@@ -55,12 +56,15 @@ function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, 
         onChange={onSquareChange}
       />
 
-      {user && <Dashboard refreshKey={refreshKey} squareId={squareId} />}
+      {user?.role === 'GESTOR' && <OccurrenceFilters value={filters} onChange={onFiltersChange} />}
+
+      {user?.role === 'GESTOR' && <Dashboard refreshKey={refreshKey} squareId={squareId} filters={filters} />}
 
       <OccurrenceList
         user={user}
         refreshKey={refreshKey}
         squareId={squareId}
+        filters={user?.role === 'GESTOR' ? filters : undefined}
         onOccurrenceUpdated={onRefresh}
       />
 
@@ -71,7 +75,7 @@ function OccurrencesPage({ user, squares, squareId, onSquareChange, refreshKey, 
   );
 }
 
-function ManagementPage({ squares, squareId, onSquareChange, refreshKey }) {
+function ManagementPage({ squares, squareId, onSquareChange, refreshKey, filters, onFiltersChange }) {
   return (
     <div className="page-content">
       <header className="page-heading">
@@ -85,7 +89,8 @@ function ManagementPage({ squares, squareId, onSquareChange, refreshKey }) {
         squareId={squareId}
         onChange={onSquareChange}
       />
-      <Dashboard refreshKey={refreshKey} squareId={squareId} />
+      <OccurrenceFilters value={filters} onChange={onFiltersChange} />
+      <Dashboard refreshKey={refreshKey} squareId={squareId} filters={filters} />
       <SquareManagement />
     </div>
   );
@@ -121,6 +126,7 @@ function AppRoutes() {
   const [squares, setSquares] = useState([]);
   const [selectedSquareId, setSelectedSquareId] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [filters, setFilters] = useState({ from: '', to: '', category: '', status: '' });
 
   useEffect(() => {
     getCurrentUser()
@@ -158,7 +164,7 @@ function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route
           path="/pracas/:id"
-          element={<SquareDetails user={user} refreshKey={refreshKey} onRefresh={refreshData} />}
+          element={<SquareDetails user={user} refreshKey={refreshKey} onRefresh={refreshData} filters={filters} onFiltersChange={setFilters} />}
         />
         <Route
           path="/ocorrencias"
@@ -170,6 +176,8 @@ function AppRoutes() {
               onSquareChange={setSelectedSquareId}
               refreshKey={refreshKey}
               onRefresh={refreshData}
+              filters={filters}
+              onFiltersChange={setFilters}
             />
           }
         />
@@ -182,6 +190,8 @@ function AppRoutes() {
                 squareId={selectedSquareId}
                 onSquareChange={setSelectedSquareId}
                 refreshKey={refreshKey}
+                filters={filters}
+                onFiltersChange={setFilters}
               />
             </ManagerOnly>
           }

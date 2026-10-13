@@ -42,6 +42,25 @@
     gap: 22px;
 }
 
+.square-type-badge {
+    display: inline-block;
+    margin: 0 0 9px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: var(--color-forest-light);
+    color: var(--color-forest);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.square-area {
+    min-height: 0 !important;
+    margin: -6px 0 10px !important;
+    color: var(--color-forest) !important;
+    font-size: 11px !important;
+    font-weight: 600;
+}
+
 .square-card {
     min-width: 0;
     border: 1px solid var(--color-border);

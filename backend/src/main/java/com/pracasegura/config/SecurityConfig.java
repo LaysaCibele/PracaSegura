@@ -83,6 +83,9 @@ public SecurityFilterChain securityFilterChain(
                 "/api/squares", "/api/squares/**")
                 .permitAll()
 
+            .requestMatchers(HttpMethod.GET, "/api/urban-indicators")
+                .hasRole("GESTOR")
+
             .requestMatchers(HttpMethod.GET,
                 "/api/occurrences", "/api/occurrences/**")
                 .authenticated()

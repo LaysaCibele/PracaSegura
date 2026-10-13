@@ -18,6 +18,21 @@ List<Occurrence> findByReporterId(Long reporterId);
 
 List<Occurrence> findByReporterIdAndSquareId(Long reporterId, Long squareId);
 
+List<Occurrence> findByOrigin(String origin);
+
+boolean existsByExternalKey(String externalKey);
+
+long countBySquareIdAndStatusAndOrigin(Long squareId, String status, String origin);
+
+@Query("""
+    SELECT COUNT(o)
+    FROM Occurrence o
+    WHERE o.square.id = :squareId
+      AND o.origin = 'REAL'
+      AND LOWER(TRIM(o.category)) IN ('segurança', 'seguranca')
+    """)
+long countRealSecurityOccurrences(@Param("squareId") Long squareId);
+
 @Query("""
     SELECT o.status AS label, COUNT(o) AS total
     FROM Occurrence o

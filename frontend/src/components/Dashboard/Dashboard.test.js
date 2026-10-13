@@ -11,8 +11,9 @@ test('loads indicators for the selected plaza', async () => {
 
   render(<Dashboard refreshKey={0} squareId="12" />);
 
-  await waitFor(() => expect(getOccurrenceStats).toHaveBeenCalledWith('12'));
+  await waitFor(() => expect(getOccurrenceStats).toHaveBeenCalledWith('12', undefined));
   expect(await screen.findByText('3')).toBeInTheDocument();
+  expect(screen.queryByText(/exemplos sintéticos identificados na lista/)).not.toBeInTheDocument();
 });
 
 test('formats normalized category labels for display', async () => {

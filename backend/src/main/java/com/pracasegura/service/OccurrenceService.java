@@ -6,6 +6,13 @@ import java.text.Normalizer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -96,6 +103,7 @@ public Occurrence save(
     occurrence.setSquare(square);
     occurrence.setReporter(reporter);
     occurrence.setStatus("REGISTRADA");
+    occurrence.setOrigin("REAL");
     occurrence.setCreatedAt(java.time.LocalDateTime.now());
 
     return occurrenceRepository.save(occurrence);
@@ -119,8 +127,128 @@ public Occurrence updateStatus(Long id, String status) {
     }
 
     occurrence.setStatus(normalizedStatus);
+    occurrence.setResolvedAt("RESOLVIDA".equals(normalizedStatus)
+            ? java.time.LocalDateTime.now()
+            : null);
 
     return occurrenceRepository.save(occurrence);
+}
+
+public OccurrenceStatsResponse getFilteredStats(
+        AppUser viewer,
+        boolean manager,
+        Long squareId,
+        LocalDate from,
+        LocalDate to,
+        String category,
+        String status) {
+    List<Occurrence> filtered = getFilteredOccurrences(viewer, manager, squareId, from, to, category, status);
+
+    Map<String, Long> byStatus = new LinkedHashMap<>();
+    Map<String, Long> byCategory = new LinkedHashMap<>();
+    Map<YearMonth, Long> byMonth = new TreeMap<>();
+    long securityTotal = 0;
+    long pending = 0;
+    long resolved = 0;
+    long validStatus = 0;
+    long resolutionHoursTotal = 0;
+    long resolutionSamples = 0;
+    long pendingSecurity = 0;
+    long pendingLighting = 0;
+    for (Occurrence item : filtered) {
+        String itemStatus = safeStatus(item);
+        byStatus.merge(itemStatus, 1L, Long::sum);
+        String categoryKey = normalizeCategory(item.getCategory());
+        byCategory.merge(categoryDisplayLabel(categoryKey, item.getCategory()), 1L, Long::sum);
+        byMonth.merge(YearMonth.from(item.getCreatedAt()), 1L, Long::sum);
+        boolean isSecurity = "seguranca".equals(categoryKey);
+        boolean isLighting = "iluminacao".equals(categoryKey);
+        if (isSecurity) securityTotal++;
+        if (ALLOWED_STATUSES.contains(itemStatus)) {
+            validStatus++;
+            if ("RESOLVIDA".equals(itemStatus)) {
+                resolved++;
+                if (item.getResolvedAt() != null && item.getCreatedAt() != null
+                        && !item.getResolvedAt().isBefore(item.getCreatedAt())) {
+                    resolutionHoursTotal += ChronoUnit.HOURS.between(item.getCreatedAt(), item.getResolvedAt());
+                    resolutionSamples++;
+                }
+            } else {
+                pending++;
+                if (isSecurity) pendingSecurity++;
+                if (isLighting) pendingLighting++;
+            }
+        }
+    }
+
+    double resolutionRate = validStatus == 0 ? 0 : (double) resolved * 100.0 / validStatus;
+    Double averageResolutionHours = resolutionSamples == 0
+            ? null
+            : (double) resolutionHoursTotal / resolutionSamples;
+    List<OccurrenceStatsResponse.Recommendation> recommendations = new ArrayList<>();
+    if (pendingSecurity > 0) {
+        recommendations.add(new OccurrenceStatsResponse.Recommendation(
+                "Revisar relatos de segurança pendentes",
+                pendingSecurity + " registros na categoria Segurança ainda sem status Resolvida.",
+                "Encaminhar para triagem da equipe responsável e registrar a atualização do atendimento.",
+                "São relatos do sistema, não confirmação de crime nem avaliação de risco."));
+    }
+    if (pendingLighting > 0) {
+        recommendations.add(new OccurrenceStatsResponse.Recommendation(
+                "Verificar relatos de iluminação pendentes",
+                pendingLighting + " registros na categoria Iluminação ainda sem status Resolvida.",
+                "Conferir em campo antes de abrir ou priorizar ordem de manutenção.",
+                "O inventário de postes não comprova funcionamento dos equipamentos."));
+    }
+    recommendations.add(new OccurrenceStatsResponse.Recommendation(
+            "Completar a coleta de dados antes de calcular um índice de segurança",
+            "Não há medida de frequência de visitantes, pesquisa de percepção ou confirmação operacional da iluminação.",
+            "Coletar esses dados com período, método e cobertura definidos.",
+            "O projeto não produz nota de segurança nem previsão de criminalidade."));
+
+    List<OccurrenceStatsResponse.StatItem> statusItems = byStatus.entrySet().stream()
+            .map(entry -> new OccurrenceStatsResponse.StatItem(entry.getKey(), entry.getValue())).toList();
+    List<OccurrenceStatsResponse.StatItem> categoryItems = byCategory.entrySet().stream()
+            .map(entry -> new OccurrenceStatsResponse.StatItem(entry.getKey(), entry.getValue())).toList();
+    List<OccurrenceStatsResponse.MonthItem> monthItems = byMonth.entrySet().stream()
+            .map(entry -> new OccurrenceStatsResponse.MonthItem(entry.getKey().toString(), entry.getValue())).toList();
+
+    return new OccurrenceStatsResponse(
+            filtered.size(), securityTotal, pending, resolved, validStatus, resolutionRate,
+            averageResolutionHours, statusItems, categoryItems, monthItems, recommendations);
+}
+
+public List<Occurrence> getFilteredOccurrences(
+        AppUser viewer, boolean manager, Long squareId, LocalDate from, LocalDate to,
+        String category, String status) {
+    if (squareId != null && !squareRepository.existsById(squareId)) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Praça não encontrada: " + squareId);
+    }
+    List<Occurrence> visible = new ArrayList<>();
+    if (manager) {
+        visible.addAll(squareId == null ? occurrenceRepository.findAll() : occurrenceRepository.findBySquareId(squareId));
+    } else {
+        visible.addAll(occurrenceRepository.findByReporterId(viewer.getId()));
+    }
+    String categoryFilter = category == null || category.isBlank() ? null : normalizeCategory(category);
+    String statusFilter = status == null || status.isBlank() ? null : status.trim().toUpperCase(Locale.ROOT);
+    return visible.stream()
+            .filter(item -> squareId == null || item.getSquare().getId().equals(squareId))
+            .filter(item -> item.getCreatedAt() != null)
+            .filter(item -> from == null || !item.getCreatedAt().toLocalDate().isBefore(from))
+            .filter(item -> to == null || !item.getCreatedAt().toLocalDate().isAfter(to))
+            .filter(item -> categoryFilter == null || normalizeCategory(item.getCategory()).equals(categoryFilter))
+            .filter(item -> statusFilter == null || safeStatus(item).equals(statusFilter))
+            .collect(Collectors.toMap(Occurrence::getId, item -> item, (first, ignored) -> first))
+            .values().stream()
+            .sorted(Comparator.comparing(Occurrence::getCreatedAt).reversed())
+            .toList();
+}
+
+private String safeStatus(Occurrence occurrence) {
+    return occurrence.getStatus() == null || occurrence.getStatus().isBlank()
+            ? "NAO_INFORMADO"
+            : occurrence.getStatus().trim().toUpperCase(Locale.ROOT);
 }
 
 

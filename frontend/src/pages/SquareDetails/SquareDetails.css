@@ -56,6 +56,16 @@
   font-weight: 700;
 }
 
+.square-detail-type {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--color-forest-light);
+  color: var(--color-forest) !important;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .square-map-link {
   display: inline-block;
   margin-top: 10px;

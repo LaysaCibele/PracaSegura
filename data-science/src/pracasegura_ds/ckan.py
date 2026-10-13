@@ -3,6 +3,7 @@
 import csv
 import io
 import json
+import time
 from collections.abc import Iterator
 from http.client import IncompleteRead
 from urllib.error import HTTPError, URLError
@@ -87,6 +88,32 @@ def iter_csv_records(download_url: str, *, timeout: int = 90) -> Iterator[dict[s
         raise CKANError(f"Falha ao ler CSV publicado: {exc}") from exc
 
 
+def iter_csv_records_with_audit(
+    download_url: str,
+    audit: dict[str, int],
+    *,
+    timeout: int = 90,
+) -> Iterator[dict[str, object]]:
+    """Lê linhas estruturalmente válidas e conta, sem ocultar, linhas malformadas."""
+    request = Request(download_url, headers={"User-Agent": "PracaSeguraDataAudit/0.1"})
+    audit.setdefault("rows", 0)
+    audit.setdefault("malformed_rows", 0)
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            text = io.TextIOWrapper(response, encoding="utf-8-sig", errors="replace", newline="")
+            reader = csv.DictReader(text, delimiter=";")
+            if not reader.fieldnames:
+                raise CKANError("O CSV não contém cabeçalho")
+            for row in reader:
+                audit["rows"] += 1
+                if None in row or any(value is None for value in row.values()):
+                    audit["malformed_rows"] += 1
+                    continue
+                yield row
+    except (HTTPError, URLError, TimeoutError, IncompleteRead, UnicodeError, csv.Error) as exc:
+        raise CKANError(f"Falha ao ler CSV publicado: {exc}") from exc
+
+
 def iter_records(
     api_url: str,
     resource_id: str,
@@ -107,11 +134,15 @@ def iter_records(
     while expected_total is None or offset < expected_total:
         query = urlencode({"resource_id": resource_id, "limit": page_size, "offset": offset})
         request = Request(f"{api_url}?{query}", headers={"User-Agent": "PracaSeguraDataAudit/0.1"})
-        try:
-            with urlopen(request, timeout=timeout) as response:
-                payload = json.load(response)
-        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
-            raise CKANError(f"Falha ao consultar recurso {resource_id}: {exc}") from exc
+        for attempt in range(3):
+            try:
+                with urlopen(request, timeout=timeout) as response:
+                    payload = json.load(response)
+                break
+            except (HTTPError, URLError, TimeoutError, IncompleteRead, json.JSONDecodeError) as exc:
+                if attempt == 2:
+                    raise CKANError(f"Falha ao consultar recurso {resource_id} na página {offset}: {exc}") from exc
+                time.sleep(0.5 * (attempt + 1))
 
         if not payload.get("success") or not isinstance(payload.get("result"), dict):
             raise CKANError(f"CKAN retornou resposta inválida para o recurso {resource_id}")

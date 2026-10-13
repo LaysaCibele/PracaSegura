@@ -37,7 +37,7 @@ test('citizen sees only their own records without edit controls', async () => {
     />
   );
 
-  expect(await screen.findByRole('heading', { name: 'Minhas ocorrências.' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: 'Meus relatos.' })).toBeInTheDocument();
   expect(await screen.findByText('Registro A')).toBeInTheDocument();
   expect(screen.queryByText('Registro B')).not.toBeInTheDocument();
   expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
@@ -53,7 +53,14 @@ test('loads the selected plaza filter from the API', async () => {
     />
   );
 
-  await waitFor(() => expect(getOccurrences).toHaveBeenCalledWith('2'));
+  await waitFor(() => expect(getOccurrences).toHaveBeenCalledWith({ squareId: '2' }));
+});
+
+test('hides synthetic records from citizens', async () => {
+  getOccurrences.mockResolvedValue([{ ...records[0], origin: 'SINTETICA' }]);
+  render(<OccurrenceList user={{ id: 3, role: 'CIDADAO' }} refreshKey={0} squareId="" />);
+  expect(await screen.findByText('Você ainda não tem relatos neste filtro.')).toBeInTheDocument();
+  expect(screen.queryByText('DADO SINTÉTICO · DEMONSTRAÇÃO')).not.toBeInTheDocument();
 });
 
 test('manager can select and save a new occurrence status', async () => {

@@ -21,6 +21,9 @@ jest.mock('../../components/OccurrenceForm/OccurrenceForm', () => ({ fixedSquare
 jest.mock('../../components/UrbanIndicators/UrbanIndicators', () => () => (
   <div data-testid="urban-indicators" />
 ));
+jest.mock('../../components/SquareRecommendation/SquareRecommendation', () => () => (
+  <div data-testid="square-recommendation" />
+));
 
 const square = {
   id: 4,
@@ -40,20 +43,23 @@ beforeEach(() => {
   getSquareById.mockResolvedValue(square);
 });
 
-test('carrega os dados e filtra indicadores e ocorrências pelo id da praça', async () => {
+test('cidadão vê recomendação e relatos próprios, sem dashboard nem iluminação', async () => {
   renderDetails({ role: 'CIDADAO' });
 
   expect(await screen.findByRole('heading', { name: 'Parque da Jaqueira' })).toBeInTheDocument();
-  expect(screen.getByTestId('square-dashboard')).toHaveAttribute('data-square-id', '4');
+  expect(screen.getByTestId('square-recommendation')).toBeInTheDocument();
+  expect(screen.queryByTestId('square-dashboard')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('urban-indicators')).not.toBeInTheDocument();
   expect(screen.getByTestId('square-occurrences')).toHaveAttribute('data-square-id', '4');
   expect(screen.getByTestId('square-occurrence-form')).toHaveAttribute('data-square-id', '4');
   expect(getSquareById).toHaveBeenCalledWith('4');
 });
 
-test('solicita autenticação antes de mostrar ocorrências', async () => {
+test('visitante vê informações públicas e recomendação, mas precisa entrar para ver relatos', async () => {
   renderDetails();
 
-  expect(await screen.findByText(/Entre na sua conta para consultar os registros/)).toBeInTheDocument();
+  expect(await screen.findByText(/Entre na sua conta para consultar e registrar seus próprios relatos/)).toBeInTheDocument();
+  expect(screen.getByTestId('square-recommendation')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /Entrar ou criar conta/ })).toHaveAttribute('href', '/login');
   expect(screen.queryByTestId('square-occurrences')).not.toBeInTheDocument();
 });

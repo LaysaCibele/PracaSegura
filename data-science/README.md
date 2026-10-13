@@ -34,19 +34,19 @@ Para gerar o indicador espacial que a página de detalhes das praças consome, e
 
 ```powershell
 $env:PYTHONPATH = "data-science/src"
-python -m pracasegura_ds.spatial_audit --sources postes --output frontend/public/data/urban-indicators.json
+python -m pracasegura_ds.spatial_audit --sources postes --output backend/src/main/resources/data/urban-indicators.json
 ```
 
-O arquivo contém metadados de fonte e somente contagens agregadas. O frontend usa os nomes das quatro praças para selecionar o respectivo recorte e mantém um aviso sobre os limites do inventário.
+O arquivo contém metadados de fonte e somente contagens agregadas. O frontend usa `sourceKey` estável para selecionar o recorte dos 15 espaços (12 praças e 3 parques).
 
 O relatório inclui quantidade de linhas no arquivo e no índice CKAN, campos ausentes, coordenadas válidas/ausentes/fora de um envelope aproximado de Recife, intervalo de datas, frequências de grupos e assinaturas repetidas para revisão. Uma assinatura repetida não prova que houve duplicação: as fontes não expõem uma chave confiável de solicitação, e registros legítimos podem compartilhar atributos. Nenhuma linha é removida. O envelope geográfico serve somente para triagem; não é o limite municipal oficial. As contagens de grupos são limitadas aos 15 valores mais frequentes.
 
-### Achados da auditoria de 2026-10-12
+### Achados da auditoria de 2026-10-13
 
 - O CSV de praças tem 505 linhas e coincide com o índice CKAN; todos os pontos estão no envelope aproximado usado na triagem. O catálogo contém praças, parques e áreas verdes, que precisam ser distinguidos.
-- O CSV de iluminação tem 111.666 linhas e coincide com o índice CKAN; todas as coordenadas estão no envelope aproximado. O campo `atualizaca` está vazio nas linhas consultadas. Os tipos de luminária não comprovam estado de funcionamento.
+- O CSV de iluminação tem 111.666 linhas e coincide com o índice CKAN; contém 90.529 IDs `id_ponto` distintos e 7.099 linhas sem ID. O campo `atualizaca` está vazio nas linhas consultadas. Os tipos não comprovam funcionamento.
 - O CSV do 156 tem 61.225 linhas, enquanto o índice CKAN informa 11.374. As linhas do arquivo têm 13 colunas consistentes, então a diferença não é causada por registros CSV malformados. O recurso inclui datas de 2009 a 2026, apesar do título “2026”; 30.244 linhas não têm coordenadas. A divergência entre arquivo e índice precisa ser esclarecida antes de usar o índice para análises.
-- Para os quatro locais informados — Casa Forte, Boa Viagem, Derby e Jaqueira — o GeoJSON municipal contém, respectivamente, 3, 1, 2 e 1 polígonos candidatos. Isso indica componentes geográficos múltiplos para Casa Forte e Derby. A correspondência com os registros internos do PraçaSegura ainda não foi verificada.
+- Os 15 espaços do catálogo foram associados às feições do GeoJSON pelo nome oficial normalizado, bairro e tipo. Componentes múltiplos são agrupados; a contagem considera ponto dentro do polígono e ID distinto por espaço.
 
 ## Testes
 
@@ -57,12 +57,12 @@ python -m unittest discover -s tests -v
 
 ## Limites atuais
 
-- A correspondência nominal entre os quatro locais informados e polígonos públicos foi localizada, mas falta compará-la aos IDs e coordenadas cadastrados no PraçaSegura.
+- O catálogo contém 12 praças e 3 parques e preserva os quatro registros que já existiam no app.
 - O backend precisa estar disponível para comparar as praças do app; a auditoria não consulta o banco e não requer credenciais.
 - Pedidos do 156 medem solicitações de serviço, não condição física observada nem criminalidade.
 - O inventário de postes, sozinho, não demonstra que uma lâmpada funciona.
-- O recorte espacial do inventário de iluminação já é apresentado na página de detalhes. Ele conta registros do CSV dentro dos polígonos municipais: Casa Forte (42), Boa Viagem (58), Derby (227) e Jaqueira (295), relatório gerado em 2026-10-12. Os números podem mudar quando a fonte for atualizada e devem ser regenerados pelo comando acima.
-- As contagens representam linhas do inventário, não postes únicos nem luminárias em funcionamento. Os dados do 156 continuam fora da interface devido às limitações de cobertura e à divergência entre CSV e índice descritas na auditoria.
+- O recorte espacial conta IDs distintos por espaço. Linhas sem `id_ponto` são reportadas em separado e tornam o total indisponível quando caem no polígono; os dados são regeneráveis pelo comando acima.
+- Os IDs não confirmam equipamentos físicos únicos nem luminárias funcionando. Os dados do 156 continuam fora da interface por limitações de cobertura e pela divergência entre CSV e índice.
 - Ocorrências do app são relatos de usuários e não são usadas nesta coleta; descrições podem conter informações pessoais.
 - Não existe variável-alvo validada para aprendizado supervisionado. Nenhuma nota ou classificação de risco é produzida.
 - Não foi calculada nota de segurança, estimativa de criminalidade ou modelo preditivo. As ocorrências do app são relatos e não servem como rótulos validados.

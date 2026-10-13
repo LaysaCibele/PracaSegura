@@ -42,6 +42,7 @@ class OccurrenceServiceTest {
         assertEquals(square, saved.getSquare());
         assertEquals(reporter, saved.getReporter());
         assertEquals("REGISTRADA", saved.getStatus());
+        assertEquals("REAL", saved.getOrigin());
         assertNotNull(saved.getCreatedAt());
         org.junit.jupiter.api.Assertions.assertTrue(saved.getCreatedAt().isAfter(beforeSave));
     }
@@ -68,4 +69,37 @@ class OccurrenceServiceTest {
         assertEquals("Iluminação", stats.byCategory().get(0).label());
         assertEquals(3L, stats.byCategory().get(0).total());
     }
+
+    @Test
+    void filteredCitizenStatsIncludeOnlyOwnOccurrences() {
+        OccurrenceRepository occurrenceRepository = org.mockito.Mockito.mock(OccurrenceRepository.class);
+        SquareRepository squareRepository = org.mockito.Mockito.mock(SquareRepository.class);
+        AppUser citizen = new AppUser();
+        org.springframework.test.util.ReflectionTestUtils.setField(citizen, "id", 3L);
+        Square square = new Square();
+        square.setName("Praça Central");
+
+        Occurrence own = new Occurrence();
+        own.setCategory("Segurança");
+        own.setStatus("EM_ANALISE");
+        own.setCreatedAt(LocalDateTime.of(2026, 10, 1, 10, 0));
+        own.setSquare(square);
+        org.springframework.test.util.ReflectionTestUtils.setField(own, "id", 1L);
+
+        when(occurrenceRepository.findByReporterId(3L)).thenReturn(List.of(own));
+
+        OccurrenceStatsResponse stats = new OccurrenceService(occurrenceRepository, squareRepository)
+                .getFilteredStats(citizen, false, null, null, null, null, null);
+
+        assertEquals(1L, stats.total());
+        assertEquals(1L, stats.securityCategoryTotal());
+        assertEquals(1L, stats.pending());
+        assertEquals(0L, stats.resolved());
+        assertEquals(1L, stats.validStatusDenominator());
+        assertEquals(0.0, stats.resolutionRate());
+        org.junit.jupiter.api.Assertions.assertNull(stats.averageResolutionHours());
+        assertEquals(1, stats.byMonth().size());
+        org.junit.jupiter.api.Assertions.assertFalse(stats.recommendations().isEmpty());
+    }
+
 }

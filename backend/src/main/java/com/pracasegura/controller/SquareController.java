@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pracasegura.model.Square;
 import com.pracasegura.service.SquareService;
+import com.pracasegura.service.SquareRecommendationService;
+import com.pracasegura.dto.SquareRecommendationResponse;
 
 import jakarta.validation.Valid;
 
@@ -24,9 +26,11 @@ import jakarta.validation.Valid;
 public class SquareController {
 
     private final SquareService squareService;
+    private final SquareRecommendationService recommendationService;
 
-    public SquareController(SquareService squareService) {
+    public SquareController(SquareService squareService, SquareRecommendationService recommendationService) {
         this.squareService = squareService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping
@@ -37,6 +41,11 @@ public class SquareController {
     @GetMapping("/{id}")
     public Square findById(@PathVariable Long id) {
         return squareService.findById(id);
+    }
+
+    @GetMapping("/{id}/recommendation")
+    public SquareRecommendationResponse getRecommendation(@PathVariable Long id) {
+        return recommendationService.getForSquare(id);
     }
 
     @PostMapping

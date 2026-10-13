@@ -11,6 +11,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "squares")
@@ -24,6 +25,15 @@ public class Square {
     @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres.")
     @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(length = 16)
+    private String type = "PRACA";
+
+    @Column(precision = 14, scale = 4)
+    private BigDecimal area;
+
+    @Column(unique = true, length = 180)
+    private String sourceKey;
 
     @Size(max = 100, message = "O bairro deve ter no máximo 100 caracteres.")
     @Column(length = 100)
@@ -59,6 +69,18 @@ public class Square {
     public String getName() {
         return name;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
+
+    public BigDecimal getArea() { return area; }
+
+    public void setArea(BigDecimal area) { this.area = area; }
+
+    public String getSourceKey() { return sourceKey; }
+
+    public void setSourceKey(String sourceKey) { this.sourceKey = sourceKey; }
 
     public void setName(String name) {
         this.name = name;

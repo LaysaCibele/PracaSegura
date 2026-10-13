@@ -18,7 +18,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pracasegura.dto.OccurrenceResponse;
-import com.pracasegura.dto.OccurrenceStatsResponse;
 import com.pracasegura.dto.OccurrenceStatusRequest;
 import com.pracasegura.model.AppUser;
 import com.pracasegura.model.Occurrence;
@@ -78,13 +77,13 @@ class OccurrenceControllerTest {
         ownOccurrence.setSquare(occurrence.getSquare());
         ownOccurrence.setReporter(citizen);
         ReflectionTestUtils.setField(ownOccurrence, "id", 12L);
-        when(occurrenceService.findByReporterId(3L)).thenReturn(List.of(ownOccurrence));
-        when(occurrenceService.findByReporterIdAndSquareId(3L, 7L)).thenReturn(List.of(ownOccurrence));
+        when(occurrenceService.getFilteredOccurrences(citizen, false, null, null, null, null, null)).thenReturn(List.of(ownOccurrence));
+        when(occurrenceService.getFilteredOccurrences(citizen, false, 7L, null, null, null, null)).thenReturn(List.of(ownOccurrence));
 
-        assertEquals(1, controller.findAll(null, authentication(citizen)).size());
-        assertEquals(1, controller.findAll(7L, authentication(citizen)).size());
-        verify(occurrenceService).findByReporterId(3L);
-        verify(occurrenceService).findByReporterIdAndSquareId(3L, 7L);
+        assertEquals(1, controller.findAll(null, null, null, null, null, authentication(citizen)).size());
+        assertEquals(1, controller.findAll(7L, null, null, null, null, authentication(citizen)).size());
+        verify(occurrenceService).getFilteredOccurrences(citizen, false, null, null, null, null, null);
+        verify(occurrenceService).getFilteredOccurrences(citizen, false, 7L, null, null, null, null);
         verify(occurrenceService, never()).findAll();
         verify(occurrenceService, never()).findBySquareId(7L);
     }
@@ -92,23 +91,23 @@ class OccurrenceControllerTest {
     @Test
     void managerCanQueryAllOccurrencesOrFilterBySquare() {
         when(userRepository.findByEmail(manager.getEmail())).thenReturn(Optional.of(manager));
-        when(occurrenceService.findAll()).thenReturn(List.of(occurrence));
-        when(occurrenceService.findBySquareId(7L)).thenReturn(List.of(occurrence));
+        when(occurrenceService.getFilteredOccurrences(manager, true, null, null, null, null, null)).thenReturn(List.of(occurrence));
+        when(occurrenceService.getFilteredOccurrences(manager, true, 7L, null, null, null, null)).thenReturn(List.of(occurrence));
 
-        assertEquals(1, controller.findAll(null, authentication(manager)).size());
-        assertEquals(1, controller.findAll(7L, authentication(manager)).size());
-        verify(occurrenceService).findAll();
-        verify(occurrenceService).findBySquareId(7L);
+        assertEquals(1, controller.findAll(null, null, null, null, null, authentication(manager)).size());
+        assertEquals(1, controller.findAll(7L, null, null, null, null, authentication(manager)).size());
+        verify(occurrenceService).getFilteredOccurrences(manager, true, null, null, null, null, null);
+        verify(occurrenceService).getFilteredOccurrences(manager, true, 7L, null, null, null, null);
     }
 
     @Test
-    void citizenDashboardKeepsAggregatedStatsForSelectedSquare() {
+    void citizenCannotReadOccurrenceStats() {
         when(userRepository.findByEmail(citizen.getEmail())).thenReturn(Optional.of(citizen));
-        OccurrenceStatsResponse stats = new OccurrenceStatsResponse(5L, List.of(), List.of());
-        when(occurrenceService.getStats(null, 7L)).thenReturn(stats);
 
-        assertEquals(stats, controller.getStats(7L, authentication(citizen)));
-        verify(occurrenceService).getStats(null, 7L);
+        ResponseStatusException error = assertThrows(ResponseStatusException.class,
+                () -> controller.getStats(7L, null, null, null, null, authentication(citizen)));
+        assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
+        verify(occurrenceService, never()).getFilteredStats(citizen, false, 7L, null, null, null, null);
     }
 
     @Test

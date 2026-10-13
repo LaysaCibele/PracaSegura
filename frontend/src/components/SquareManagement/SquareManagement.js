@@ -11,6 +11,8 @@ import "./SquareManagement.css";
 
 const EMPTY_FORM = {
   name: "",
+  type: "PRACA",
+  area: "",
   neighborhood: "",
   address: "",
   description: "",
@@ -61,6 +63,8 @@ function SquareManagement() {
     setEditingId(square.id);
     setForm({
       name: square.name || "",
+      type: square.type || "PRACA",
+      area: square.area ?? "",
       neighborhood: square.neighborhood || "",
       address: square.address || "",
       description: square.description || "",
@@ -85,6 +89,8 @@ function SquareManagement() {
 
     const payload = {
       name: form.name.trim(),
+      type: form.type,
+      area: form.area === "" ? null : Number(form.area),
       neighborhood: form.neighborhood.trim(),
       address: form.address.trim(),
       description: form.description.trim(),
@@ -96,6 +102,7 @@ function SquareManagement() {
     };
 
     if (
+      (payload.area !== null && (!Number.isFinite(payload.area) || payload.area < 0)) ||
       (payload.latitude !== null &&
         (!Number.isFinite(payload.latitude) ||
           payload.latitude < -90 ||
@@ -175,6 +182,19 @@ function SquareManagement() {
             maxLength={100}
             required
           />
+        </label>
+
+        <label>
+          Tipo de espaço
+          <select name="type" value={form.type} onChange={handleChange}>
+            <option value="PRACA">Praça</option>
+            <option value="PARQUE">Parque</option>
+          </select>
+        </label>
+
+        <label>
+          Área publicada pela fonte (unidade não informada)
+          <input name="area" type="number" min="0" step="any" value={form.area} onChange={handleChange} />
         </label>
 
         <label>

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.pracasegura.model.Square;
 
+import java.util.Optional;
+
 @Repository
 public interface SquareRepository extends JpaRepository<Square, Long> {
+    Optional<Square> findBySourceKey(String sourceKey);
 }

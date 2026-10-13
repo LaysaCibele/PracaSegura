@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import Dashboard from '../../components/Dashboard/Dashboard';
+import OccurrenceFilters from '../../components/OccurrenceFilters/OccurrenceFilters';
 import OccurrenceForm from '../../components/OccurrenceForm/OccurrenceForm';
 import OccurrenceList from '../../components/OccurrenceList/OccurrenceList';
+import SquareRecommendation from '../../components/SquareRecommendation/SquareRecommendation';
 import UrbanIndicators from '../../components/UrbanIndicators/UrbanIndicators';
 import { getSquareById } from '../../services/squareService';
 import './SquareDetails.css';
 
-function SquareDetails({ user, refreshKey, onRefresh }) {
+function SquareDetails({ user, refreshKey, onRefresh, filters, onFiltersChange }) {
   const { id } = useParams();
   const [square, setSquare] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,8 +56,10 @@ function SquareDetails({ user, refreshKey, onRefresh }) {
         <div className="square-detail-summary">
           <span className="section-label">DETALHES DO ESPAÇO</span>
           <h1 id="square-title">{square.name}</h1>
+          <p className="square-detail-type">{square.type === 'PARQUE' ? 'Parque' : 'Praça'}</p>
           <p className="square-detail-neighborhood">{square.neighborhood || 'Bairro não informado'} · Recife</p>
           {square.address && <p>{square.address}</p>}
+          {square.area != null && <p>Área no cadastro oficial: {new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(square.area)} (unidade não informada pela fonte).</p>}
           {square.description && <p>{square.description}</p>}
           {mapUrl && <a className="square-map-link" href={mapUrl} target="_blank" rel="noreferrer">Ver localização no mapa ↗</a>}
         </div>
@@ -66,14 +70,17 @@ function SquareDetails({ user, refreshKey, onRefresh }) {
           <span className="section-label">ACOMPANHAMENTO</span>
           <h2 id="square-occurrences-title">Resumo da praça</h2>
           <p>{user?.role === 'GESTOR'
-            ? `Indicadores agregados e ocorrências registradas em ${square.name}.`
-            : `Veja o resumo agregado de ${square.name} e acompanhe apenas as ocorrências que você registrou neste local.`}</p>
+            ? `Indicadores e ocorrências registradas em ${square.name}.`
+            : `Acompanhe seus relatos registrados em ${square.name}.`}</p>
         </div>
+
+        {user?.role !== 'GESTOR' && <SquareRecommendation squareId={square.id} refreshKey={refreshKey} />}
 
         {user ? (
           <>
-            <Dashboard refreshKey={refreshKey} squareId={String(square.id)} />
-            <OccurrenceList user={user} refreshKey={refreshKey} squareId={String(square.id)} onOccurrenceUpdated={onRefresh} />
+            {user.role === 'GESTOR' && <OccurrenceFilters value={filters} onChange={onFiltersChange} />}
+            {user.role === 'GESTOR' && <Dashboard refreshKey={refreshKey} squareId={String(square.id)} filters={filters} />}
+            <OccurrenceList user={user} refreshKey={refreshKey} squareId={String(square.id)} filters={user.role === 'GESTOR' ? filters : undefined} onOccurrenceUpdated={onRefresh} />
             {user.role !== 'GESTOR' && (
               <>
                 <OccurrenceForm user={user} onCreated={onRefresh} fixedSquareId={square.id} />
@@ -83,13 +90,13 @@ function SquareDetails({ user, refreshKey, onRefresh }) {
           </>
         ) : (
           <div className="square-auth-notice">
-            <p>Entre na sua conta para consultar os registros e indicadores desta praça.</p>
+            <p>Entre na sua conta para consultar e registrar seus próprios relatos.</p>
             <Link to="/login">Entrar ou criar conta ↗</Link>
           </div>
         )}
       </section>
 
-      <UrbanIndicators squareName={square.name} />
+      {user?.role === 'GESTOR' && <UrbanIndicators squareName={square.name} sourceKey={square.sourceKey} />}
 
       <p className="square-detail-disclaimer">As informações exibidas refletem os cadastros disponíveis no sistema. Elas não constituem avaliação oficial de segurança.</p>
     </div>

@@ -1,0 +1,232 @@
+{
+  "generated_at_utc": "2026-10-13T20:10:36.472813+00:00",
+  "method": {
+    "space_catalog": "Official names, type, neighborhood, address, area and coordinates from the Recife Parques e Praças CSV.",
+    "plaza_boundaries": "Official municipal GeoJSON matched by normalized official name, neighborhood and type; all matched geometry components are grouped.",
+    "point_rule": "WGS84 point-in-polygon; a pole is counted once per space by distinct id_ponto. Records without id_ponto are reported separately and excluded from the pole count.",
+    "malformed_rows": "Rows with inconsistent CSV column counts are excluded from spatial calculations and counted in the report; their location cannot be verified.",
+    "raw_rows_persisted": false,
+    "interpretation": "Identified pole IDs are inventory records, not confirmation of unique physical equipment or operating condition. The source has no verified operational-status field."
+  },
+  "catalog_source": {
+    "dataset_page": "https://dados.recife.pe.gov.br/dataset/parques-e-pracas",
+    "resource_page": "https://dados.recife.pe.gov.br/dataset/parques-e-pracas/resource/d2199b6f-1d24-4553-980b-e11dafc90e06",
+    "resource_id": "d2199b6f-1d24-4553-980b-e11dafc90e06",
+    "publisher": "Secretaria de Infraestrutura e Serviços Urbanos do Recife",
+    "license": "Open Data Commons Open Database License (ODbL)",
+    "last_data_update_on_portal": "2026-03-04"
+  },
+  "geometry_resource_page": "https://dados.recife.pe.gov.br/dataset/parques-e-pracas/resource/054f05a9-a113-47e0-a46f-720e4828eaf2",
+  "place_polygon_components": {
+    "recife:praca:casa-forte:casa-forte": 3,
+    "recife:praca:boa-viagem:boa-viagem": 1,
+    "recife:praca:derby:derby": 2,
+    "recife:parque:jaqueira:jaqueira": 1,
+    "recife:praca:flor-de-santana:poco": 1,
+    "recife:praca:independencia:santo-antonio": 1,
+    "recife:praca:chora-menino:paissandu": 1,
+    "recife:praca:rio-branco:recife": 1,
+    "recife:praca:republica:santo-antonio": 3,
+    "recife:praca:jules-rimet:boa-viagem": 1,
+    "recife:praca:la-coruna:boa-viagem": 1,
+    "recife:praca:campo-santo:santo-amaro": 1,
+    "recife:praca:3-jardim-boa-viagem:boa-viagem": 1,
+    "recife:parque:treze-de-maio:santo-amaro": 1,
+    "recife:parque:dona-lindu:boa-viagem": 1
+  },
+  "datasets": [
+    {
+      "source": "postes",
+      "title": "Iluminação Pública do Recife — 2025",
+      "published_csv_rows": 111666,
+      "processed_csv_rows": 111666,
+      "malformed_csv_rows_excluded": 0,
+      "ckan_datastore_indexed_rows": 111666,
+      "csv_and_index_counts_match": true,
+      "unique_identified_point_ids": 90529,
+      "missing_point_ids": 7099,
+      "missing_or_invalid_coordinates": 0,
+      "outside_all_place_polygons": 110010,
+      "records_matching_multiple_places": 0,
+      "spaces": [
+        {
+          "source_key": "recife:praca:casa-forte:casa-forte",
+          "name": "Praça de Casa Forte",
+          "official_name": "Praça de Casa Forte",
+          "type": "PRACA",
+          "polygon_components": 3,
+          "identified_poles": 42,
+          "records_inside": 42,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 0
+        },
+        {
+          "source_key": "recife:praca:boa-viagem:boa-viagem",
+          "name": "Praça de Boa Viagem",
+          "official_name": "Praça de Boa Viagem",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 17,
+          "records_inside": 58,
+          "unidentified_records_inside": 2,
+          "duplicate_rows_collapsed": 39
+        },
+        {
+          "source_key": "recife:praca:derby:derby",
+          "name": "Praça do Derby",
+          "official_name": "Praça do Derby",
+          "type": "PRACA",
+          "polygon_components": 2,
+          "identified_poles": 146,
+          "records_inside": 227,
+          "unidentified_records_inside": 6,
+          "duplicate_rows_collapsed": 75
+        },
+        {
+          "source_key": "recife:parque:jaqueira:jaqueira",
+          "name": "Parque da Jaqueira",
+          "official_name": "Parque da Jaqueira",
+          "type": "PARQUE",
+          "polygon_components": 1,
+          "identified_poles": 227,
+          "records_inside": 295,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 68
+        },
+        {
+          "source_key": "recife:praca:flor-de-santana:poco",
+          "name": "Praça Flor de Santana",
+          "official_name": "Praça Flor de Santana",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 6,
+          "records_inside": 12,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 6
+        },
+        {
+          "source_key": "recife:praca:independencia:santo-antonio",
+          "name": "Praça da Independência",
+          "official_name": "Praça da Independência",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 0,
+          "records_inside": 11,
+          "unidentified_records_inside": 11,
+          "duplicate_rows_collapsed": 0
+        },
+        {
+          "source_key": "recife:praca:chora-menino:paissandu",
+          "name": "Praça Chora Menino",
+          "official_name": "Praça Chora Menino",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 14,
+          "records_inside": 24,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 10
+        },
+        {
+          "source_key": "recife:praca:rio-branco:recife",
+          "name": "Praça Rio Branco (Marco Zero)",
+          "official_name": "Praça Rio Branco (Marco Zero)",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 0,
+          "records_inside": 4,
+          "unidentified_records_inside": 4,
+          "duplicate_rows_collapsed": 0
+        },
+        {
+          "source_key": "recife:praca:republica:santo-antonio",
+          "name": "Praça da República",
+          "official_name": "Praça da República",
+          "type": "PRACA",
+          "polygon_components": 3,
+          "identified_poles": 101,
+          "records_inside": 140,
+          "unidentified_records_inside": 2,
+          "duplicate_rows_collapsed": 37
+        },
+        {
+          "source_key": "recife:praca:jules-rimet:boa-viagem",
+          "name": "Praça Jules Rimet (1º Jardim)",
+          "official_name": "Praça Jules Rimet (1º Jardim)",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 15,
+          "records_inside": 33,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 18
+        },
+        {
+          "source_key": "recife:praca:la-coruna:boa-viagem",
+          "name": "Praça La Coruña (2º Jardim)",
+          "official_name": "Praça La Coruña (2º Jardim)",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 10,
+          "records_inside": 58,
+          "unidentified_records_inside": 48,
+          "duplicate_rows_collapsed": 0
+        },
+        {
+          "source_key": "recife:praca:campo-santo:santo-amaro",
+          "name": "Praça do Campo Santo",
+          "official_name": "Praça do Campo Santo",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 32,
+          "records_inside": 37,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 5
+        },
+        {
+          "source_key": "recife:praca:3-jardim-boa-viagem:boa-viagem",
+          "name": "Praça 3º Jardim de Boa Viagem",
+          "official_name": "Praça 3º Jardim de Boa Viagem",
+          "type": "PRACA",
+          "polygon_components": 1,
+          "identified_poles": 16,
+          "records_inside": 33,
+          "unidentified_records_inside": 0,
+          "duplicate_rows_collapsed": 17
+        },
+        {
+          "source_key": "recife:parque:treze-de-maio:santo-amaro",
+          "name": "Parque 13 de Maio",
+          "official_name": "Parque Treze de Maio",
+          "type": "PARQUE",
+          "polygon_components": 1,
+          "identified_poles": 207,
+          "records_inside": 234,
+          "unidentified_records_inside": 12,
+          "duplicate_rows_collapsed": 15
+        },
+        {
+          "source_key": "recife:parque:dona-lindu:boa-viagem",
+          "name": "Parque Dona Lindu",
+          "official_name": "Parque Dona Lindu",
+          "type": "PARQUE",
+          "polygon_components": 1,
+          "identified_poles": 425,
+          "records_inside": 448,
+          "unidentified_records_inside": 1,
+          "duplicate_rows_collapsed": 22
+        }
+      ],
+      "metadata": {
+        "publisher": "EMLURB",
+        "license": "Open Data Commons Open Database License (ODbL)",
+        "last_data_update_on_portal": "2026-03-04",
+        "file_last_modified": "2026-03-04T13:15:49.916236",
+        "format": "CSV",
+        "dataset_page": "https://dados.recife.pe.gov.br/dataset/postes-iluminacao-publica-do-recife",
+        "resource_page": "https://dados.recife.pe.gov.br/dataset/postes-iluminacao-publica-do-recife/resource/76cb7e65-1362-4ea7-ac04-453d67e41c64",
+        "resource_id": "76cb7e65-1362-4ea7-ac04-453d67e41c64",
+        "analysis_access": "Published UTF-8 semicolon CSV; malformed rows excluded and counted separately"
+      },
+      "resource_page": "https://dados.recife.pe.gov.br/dataset/postes-iluminacao-publica-do-recife/resource/76cb7e65-1362-4ea7-ac04-453d67e41c64"
+    }
+  ]
+}

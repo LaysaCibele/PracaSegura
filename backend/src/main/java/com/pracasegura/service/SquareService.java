@@ -40,6 +40,8 @@ public class SquareService {
         Square square = findById(id);
 
         square.setName(updatedSquare.getName());
+        square.setType(updatedSquare.getType());
+        square.setArea(updatedSquare.getArea());
         square.setNeighborhood(updatedSquare.getNeighborhood());
         square.setAddress(updatedSquare.getAddress());
         square.setDescription(updatedSquare.getDescription());
